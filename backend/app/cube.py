@@ -143,6 +143,8 @@ class Variable:
                 np.save(f, out)
                 np.save(fm, mean)
                 self._annual, self._mean = out, mean
+        if self._annual is None:
+            raise RuntimeError("annual anomalies were not built")
         return self._annual
 
     def cell_mean(self) -> np.ndarray:
