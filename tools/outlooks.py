@@ -57,7 +57,7 @@ def main():
             r = trend.analyze(y, year, month)
             robust = trend.robustness(y, year, month) if "rate" in r else {"robust": False}
             robust["robust"] = bool(robust["robust"] and r["verdict"].startswith("significant"))
-            info = regions.get(rid)
+            info = regions.require(rid)
             o = forecast.outlook_block(
                 skill, cat, r, robust, y, year, month, {"region_id": rid, "bbox": info["bbox"], "kind": "region"}
             )
