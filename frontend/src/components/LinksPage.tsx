@@ -167,8 +167,8 @@ export function LinksPage() {
         ...tip,
         formatter: (x: { dataType: string; data: { source?: string; target?: string; value?: number; name?: string } }) =>
           x.dataType === 'edge'
-            ? `${l(name(x.data.source!))} → ${l(name(x.data.target!))}: r = ${num(x.data.value!, 2, true)}`
-            : l(name(x.data.name!)),
+            ? `${l(name(x.data.source ?? ''))} → ${l(name(x.data.target ?? ''))}: r = ${num(x.data.value, 2, true)}`
+            : l(name(x.data.name ?? '')),
       },
       series: [
         {
