@@ -205,6 +205,13 @@ Sudan, `SDS`. The search on the site or `GET /api/regions?q=Sudan` shows the cod
 
 First-level regions have codes such as `RUS-2612` (Sakha Republic). Search: `GET /api/regions?q=Sakha`.
 
+### Deserts, mountains, seas and cities
+
+Named regions of Natural Earth have codes made of their kind and English name: `desert_sahara`,
+`mountains_alps`, `plateau_tibetan_plateau`, `sea_mediterranean_sea`, `bay_bay_of_bengal`. A city is a circle of
+50 km around it: `city_delhi`, `city_beijing`. Search: `GET /api/regions?q=Sahara`; the code is also in the address
+of the page after `r=`. A rule cannot narrow a territory to one terrain type yet; on the site it can.
+
 ### Latitude belts
 
 | Code | Territory |

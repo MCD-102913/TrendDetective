@@ -37,15 +37,17 @@ Monthly global records, regridded to a common grid of 0.5 to 1 degree.
 | Dataset | Archive or service | Quantities |
 |---|---|---|
 | MERRA-2 reanalysis | NASA POWER open data store (Zarr on AWS S3) | air temperature (mean, daily maximum and minimum), humidity, water vapour, wind, sea level pressure, ozone, precipitation, evaporation, soil moisture, snow depth and cover, sea ice, surface temperature |
+| MERRA-2 M2IMNPASM (5.12.4), pressure levels | GES DISC through NASA cloud OPeNDAP | air temperature from 850 to 10 hPa (about 1.5 to 31 km), relative humidity at 850, 500 and 300 hPa, stratospheric ozone at 50 and 10 hPa |
 | GPM IMERG | NASA POWER open data store | precipitation |
 | CERES SYN1deg (with MODIS clouds) | NASA POWER open data store | cloud amount, aerosol optical depth, sunlight at the surface, albedo |
 | MODIS Terra MOD13C2 (6.1) | LP DAAC | vegetation indices NDVI and EVI |
 | MODIS Terra MOD11C3 (6.1) | LP DAAC | land surface temperature by day and by night |
+| MODIS MCD12C1 (6.1) land cover | LP DAAC | terrain types (forests, croplands, deserts, cities and others) to narrow a territory |
 | MODIS Aqua L3 mapped chlorophyll a | OB.DAAC (NASA Ocean Biology) | ocean chlorophyll |
 | GLDAS Noah 0.25 degree monthly (2.1) | GES DISC | soil moisture, evaporation, runoff, snow water equivalent |
 | AIRS AIRS3STM (7.0) | GES DISC | air temperature, water vapour, outgoing longwave radiation |
 | OMI OMNO2d (004) | GES DISC | tropospheric NO2 |
-| Natural Earth | naturalearthdata.com | country and region boundaries |
+| Natural Earth | naturalearthdata.com | country and region boundaries; deserts, mountain ranges, plateaus, plains, deltas; oceans, seas and gulfs; large cities |
 
 ## APIs and services
 
@@ -53,7 +55,8 @@ Monthly global records, regridded to a common grid of 0.5 to 1 degree.
   [POWER API](https://power.larc.nasa.gov/) for point values used to cross check our numbers.
 * **NASA Earthdata Login**: a personal token for the archives that require it.
 * **NASA CMR** (Common Metadata Repository): to find the files of every product and month.
-* **LP DAAC, GES DISC, OB.DAAC**: download of the MODIS, GLDAS, AIRS, OMI and ocean colour files over HTTPS.
+* **NASA cloud OPeNDAP**: to read only the needed pressure levels of MERRA-2 instead of whole files.
+* **LP DAAC, GES DISC, OB.DAAC**: download of the MODIS, GLDAS, AIRS, OMI, ocean colour and land cover files over HTTPS.
 * **NASA Harmony** with the Giovanni averaging service: area averaged series computed by NASA, to verify ours.
 * **NASA GIBS** (the imagery behind NASA Worldview): recent satellite pictures shown on the map for context.
 
