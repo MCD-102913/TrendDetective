@@ -163,13 +163,13 @@ export function TrendPanel({
       <TrendChart main={main} other={other} mainName={nameOf(main)} otherName={other ? nameOf(other) : ''} />
       {!other && <OutlookNote s={main} />}
       <div className="panel-actions">
-        <button className="btn wide" onClick={onMethod}>
+        <button type="button" className="btn wide" onClick={onMethod}>
           {t('method.open')}
         </button>
-        <button className="btn" onClick={onReport}>
+        <button type="button" className="btn" onClick={onReport}>
           {t('report.open')}
         </button>
-        <button className="btn" onClick={onCsv}>
+        <button type="button" className="btn" onClick={onCsv}>
           CSV
         </button>
       </div>
@@ -178,7 +178,7 @@ export function TrendPanel({
         <div className="compare-row">
           <RegionSearch placeholder={t('compare.add')} onPick={onCompare} />
           {other && (
-            <button className="btn" onClick={() => onCompare(null)}>
+            <button type="button" className="btn" onClick={() => onCompare(null)}>
               {t('compare.remove')}
             </button>
           )}
