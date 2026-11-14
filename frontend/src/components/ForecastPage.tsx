@@ -338,7 +338,7 @@ export function ForecastPage() {
                         : t('fc.only', {
                             z: Object.entries(v.zones)
                               .filter(([, z]) => z.enabled)
-                              .map(([k]) => l(skill!.rule.zones[k]))
+                              .map(([k]) => (skill ? l(skill.rule.zones[k]) : k))
                               .join(', '),
                           })}
                     </span>
