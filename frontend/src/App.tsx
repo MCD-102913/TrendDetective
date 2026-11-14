@@ -28,6 +28,7 @@ import { RuleBuilder, type SessionRule } from './components/RuleBuilder'
 import { RulePanel } from './components/RulePanel'
 import { ScanPanel } from './components/ScanPanel'
 import { SimplePanel } from './components/SimplePanel'
+import { TerrainPicker } from './components/TerrainPicker'
 import { TOUR_DONE_KEY, Tour } from './components/Tour'
 import { TrendPanel } from './components/TrendPanel'
 import { download, fileName, seriesCsv } from './csv'
@@ -99,7 +100,9 @@ export default function App() {
   const [variable2Id, setVariable2Id] = useState<string | null>(INITIAL.variable2)
   const [startYear, setStartYear] = useState<number | null>(INITIAL.from)
   const [sigOnly, setSigOnly] = useState(false)
-  const [target, setTarget] = useState<Target>(INITIAL.point ? { kind: 'point', point: INITIAL.point } : { kind: 'region', region: GLOBAL })
+  const [target, setTarget] = useState<Target>(
+    INITIAL.point ? { kind: 'point', point: INITIAL.point } : { kind: 'region', region: GLOBAL, terrain: INITIAL.terrain },
+  )
   const [compare, setCompare] = useState<Region | null>(null)
   const [outline, setOutline] = useState<GeoJSON.Geometry | null>(null)
   const [compareOutline, setCompareOutline] = useState<GeoJSON.Geometry | null>(null)
@@ -355,8 +358,8 @@ export default function App() {
     return () => ctrl.abort()
   }, [variable, compare, effectiveStart])
 
-  const pickRegion = useCallback((r: Region) => {
-    setTarget({ kind: 'region', region: r })
+  const pickRegion = useCallback((r: Region, terrain: string | null = null) => {
+    setTarget({ kind: 'region', region: r, terrain })
     // comparing a territory with itself is meaningless
     setCompare((c) => {
       if (c?.region_id === r.region_id) setCompareOutline(null)
@@ -407,7 +410,7 @@ export default function App() {
     if (INITIAL.region && !INITIAL.point)
       api
         .region(INITIAL.region)
-        .then(pickRegion)
+        .then((r) => pickRegion(r, INITIAL.terrain ?? null))
         .catch(() => {})
     // nothing asked for in the link: the simple view opens on the visitor's own country
     else if (!INITIAL.point && (INITIAL.simple ?? savedSimple()))
@@ -439,6 +442,7 @@ export default function App() {
       simple,
       globe,
       layer: layer === 'trend' ? null : layer,
+      terrain: target.kind === 'region' ? (target.terrain ?? null) : null,
     }),
     [variable, variableId, variable2, target, compare, effectiveStart, simple, globe, layer],
   )
@@ -865,6 +869,13 @@ export default function App() {
           <div className="map-tools">
             <h2 className="step">{t('map.title')}</h2>
             <RegionSearch placeholder={t('map.search')} onPick={pickRegion} />
+            {target.kind === 'region' && (
+              <TerrainPicker
+                regionId={target.region.region_id}
+                value={target.terrain ?? null}
+                onChange={(terrain) => setTarget((x) => (x.kind === 'region' ? { ...x, terrain } : x))}
+              />
+            )}
             {simple ? (
               <button
                 type="button"

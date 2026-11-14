@@ -3,6 +3,7 @@
 //   c      comparison region id   from start year        view=simple   globe=1
 //   v2     second variable: compare mode (two synchronized maps, one territory)
 //   layer  normal | last | space (the trend map when absent)
+//   terrain  terrain type that narrows the region (rainforest, cropland...)
 export type ViewState = {
   variable: string | null
   variable2: string | null
@@ -13,6 +14,7 @@ export type ViewState = {
   simple: boolean | null
   globe: boolean
   layer?: 'normal' | 'last' | 'space' | null
+  terrain?: string | null
 }
 
 export function readView(search: string = location.search): ViewState {
@@ -30,6 +32,7 @@ export function readView(search: string = location.search): ViewState {
     simple: view === 'simple' ? true : view === 'detailed' ? false : null,
     globe: p.get('globe') === '1',
     layer: (['normal', 'last', 'space'] as const).find((x) => x === p.get('layer')) ?? null,
+    terrain: p.get('terrain'),
   }
 }
 
@@ -44,6 +47,7 @@ export function viewQuery(s: ViewState): string {
   if (s.simple !== null) p.set('view', s.simple ? 'simple' : 'detailed')
   if (s.globe) p.set('globe', '1')
   if (s.layer) p.set('layer', s.layer)
+  if (s.terrain && !s.point) p.set('terrain', s.terrain)
   const lang = new URLSearchParams(location.search).get('lang')
   if (lang) p.set('lang', lang)
   return p.toString()

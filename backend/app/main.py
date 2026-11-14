@@ -41,9 +41,9 @@ from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from . import discovery, forecast, gibs, maps, rules as rulebook, trend, verify
+from . import discovery, forecast, gibs, maps, rules as rulebook, terrain as terrain_mod, trend, verify
 from .catalog import BY_ID, SOURCES, SPHERES, TWINS, VARIABLES
-from .cube import Cube
+from .cube import Cube, Grid
 from .regions import Regions, geometry_from_request
 
 DATA_DIR = Path(os.environ.get("TREND_DATA_DIR", "data"))
@@ -55,6 +55,7 @@ _lock = threading.Lock()
 _state: dict = {}
 verifier = verify.Verifier(DATA_DIR)
 space = gibs.Gibs(DATA_DIR)
+terrain = terrain_mod.Terrain(DATA_DIR)
 rule_store = rulebook.RuleStore(DATA_DIR, Path(__file__).resolve().parents[2] / "rules" / "rules.yaml")
 
 
@@ -188,6 +189,7 @@ class SeriesRequest(BaseModel):
     name: str | None = None
     start_year: int | None = None
     end_year: int | None = None
+    terrain: str | None = None  # keep only the cells of one terrain type (terrain.py)
 
 
 @lru_cache(maxsize=512)
@@ -232,7 +234,37 @@ def resolve(req, var):
         }
         if req.point:
             territory["cell"] = [float(var.grid.lon[jj[0]]), float(var.grid.lat[ii[0]])]
+    tid = getattr(req, "terrain", None)
+    if tid:
+        if not terrain.ok or tid not in terrain.types:
+            raise HTTPException(422, "unknown terrain type")
+        keep = terrain.keep(var.grid.lat[ii], var.grid.lon[jj], tid)
+        if not keep.any():
+            raise HTTPException(422, "this territory has no cells of this terrain type")
+        ii, jj = ii[keep], jj[keep]
+        label = terrain.label(tid)
+        territory["terrain"] = {"id": tid, "name": label}
+        territory["name"] = {k: f"{territory['name'][k]}: {label[k]}" for k in ("en", "ru")}
     return ii, jj, territory
+
+
+@app.get("/api/terrain")
+def terrain_types(region_id: str | None = None):
+    """Terrain types present in a territory (or on the whole Earth), with the number of 0.5 degree cells of each."""
+    if not terrain.ok:
+        return {"year": None, "types": []}
+    grid = Grid(terrain.lat0, terrain.dlat, terrain.nlat, terrain.lon0, terrain.dlon, terrain.nlon)
+    if region_id:
+        if not regions().get(region_id):
+            raise HTTPException(404, "unknown region")
+        ii, jj = grid.cells_in(regions().geometry(region_id))
+    else:
+        ii, jj = np.indices((grid.nlat, grid.nlon)).reshape(2, -1)
+    counts = terrain.counts(grid.lat[ii], grid.lon[jj])
+    return {
+        "year": terrain.year,
+        "types": [{"id": t, "name": terrain.label(t), "cells": n} for t, n in sorted(counts.items(), key=lambda x: -x[1])],
+    }
 
 
 def window(var, y, start_year, end_year):

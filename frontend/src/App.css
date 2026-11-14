@@ -1739,3 +1739,14 @@ td:has(> .icon) {
 .lk-mark .mark-ok {
   color: inherit;
 }
+
+.terrain-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.terrain-picker .select {
+  width: auto;
+  max-width: 260px;
+  padding: 4px 6px;
+}

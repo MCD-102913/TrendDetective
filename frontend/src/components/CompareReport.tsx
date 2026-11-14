@@ -92,7 +92,7 @@ export function CompareReport() {
     }
     const target: Target = view.point
       ? { kind: 'point', point: view.point }
-      : { kind: 'region', region: { region_id: view.region ?? 'global' } as Region }
+      : { kind: 'region', region: { region_id: view.region ?? 'global' } as Region, terrain: view.terrain }
     api
       .series(va, target, view.from)
       .then(setA)

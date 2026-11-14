@@ -85,7 +85,7 @@ export function Report() {
       .catch(() => {})
     const target: Target = view.point
       ? { kind: 'point', point: view.point }
-      : { kind: 'region', region: { region_id: view.region ?? 'global' } as Region }
+      : { kind: 'region', region: { region_id: view.region ?? 'global' } as Region, terrain: view.terrain }
     api
       .series(vid, target, view.from)
       .then(setMain)

@@ -45,6 +45,7 @@ export type Series = {
     cells: number
     cells_with_data: number
     cell?: [number, number]
+    terrain?: { id: string; name: L10n }
   }
   period: { start: string; end: string }
   time: string[]
@@ -368,7 +369,13 @@ export type SpaceLayer = {
   worldview: string
 }
 
-export type Target = { kind: 'region'; region: Region } | { kind: 'point'; point: [number, number] }
+/** A territory; `terrain` narrows a region to the cells of one terrain type (forests, croplands...). */
+export type Target = { kind: 'region'; region: Region; terrain?: string | null } | { kind: 'point'; point: [number, number] }
+
+export type TerrainTypes = { year: number | null; types: { id: string; name: L10n; cells: number }[] }
+
+const where = (target: Target) =>
+  target.kind === 'region' ? { region_id: target.region.region_id, terrain: target.terrain ?? undefined } : { point: target.point }
 
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
@@ -395,6 +402,7 @@ export const api = {
   home: () => fetch('/api/home').then(json<{ region_id: string | null }>),
   region: (id: string) => fetch(`/api/regions/${id}`).then(json<Region>),
   geometry: (id: string) => fetch(`/api/regions/${id}/geometry`).then(json<GeoJSON.Geometry>),
+  terrain: (regionId: string | null) => fetch(`/api/terrain?${q({ region_id: regionId })}`).then(json<TerrainTypes>),
   series: (variable: string, target: Target, startYear: number | null, signal?: AbortSignal) =>
     fetch('/api/series', {
       method: 'POST',
@@ -403,7 +411,7 @@ export const api = {
       body: JSON.stringify({
         variable,
         start_year: startYear,
-        ...(target.kind === 'region' ? { region_id: target.region.region_id } : { point: target.point }),
+        ...where(target),
       }),
     }).then(json<Series>),
   relation: (variable: string, other: string, target: Target, startYear: number | null, signal?: AbortSignal) =>
@@ -415,7 +423,7 @@ export const api = {
         variable,
         other,
         start_year: startYear,
-        ...(target.kind === 'region' ? { region_id: target.region.region_id } : { point: target.point }),
+        ...where(target),
       }),
     }).then(json<Relation>),
   scan: (variable: string, startYear: number | null, signal?: AbortSignal) =>
@@ -458,7 +466,7 @@ export const api = {
       body: JSON.stringify({
         variable: variables[0],
         variables,
-        ...(target.kind === 'region' ? { region_id: target.region.region_id } : { point: target.point }),
+        ...where(target),
       }),
     }).then(json<RelationMatrix>),
   forecastSkill: () => fetch('/api/forecast/skill').then(json<ForecastSkill>),
