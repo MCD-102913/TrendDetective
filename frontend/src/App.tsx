@@ -634,29 +634,30 @@ export default function App() {
             {!simple && <Nav active="map" variable={variable?.id} region={target.kind === 'region' ? target.region.region_id : null} />}
             <div className="view-tools">
               <div className="seg" role="group" aria-label={t('view.title')}>
-                <button className={`btn ${simple ? 'on' : ''}`} aria-pressed={simple} onClick={() => setSimple(true)}>
+                <button type="button" className={`btn ${simple ? 'on' : ''}`} aria-pressed={simple} onClick={() => setSimple(true)}>
                   {t('view.simple')}
                 </button>
-                <button className={`btn ${!simple ? 'on' : ''}`} aria-pressed={!simple} onClick={() => setSimple(false)}>
+                <button type="button" className={`btn ${!simple ? 'on' : ''}`} aria-pressed={!simple} onClick={() => setSimple(false)}>
                   {t('view.detailed')}
                 </button>
               </div>
-              <button className={`btn ${globe ? 'on' : ''}`} aria-pressed={globe} onClick={() => setGlobe((g) => !g)}>
+              <button type="button" className={`btn ${globe ? 'on' : ''}`} aria-pressed={globe} onClick={() => setGlobe((g) => !g)}>
                 {globe ? t('map.flat') : t('map.globe')}
               </button>
             </div>
             {!simple && (
-              <button className={`btn ${variable2 ? 'on' : ''}`} aria-pressed={!!variable2} onClick={toggleCompareVars}>
+              <button type="button" className={`btn ${variable2 ? 'on' : ''}`} aria-pressed={!!variable2} onClick={toggleCompareVars}>
                 {variable2 ? t('cmp.exit') : t('cmp.enter')}
               </button>
             )}
-            <button className="btn" onClick={() => setTourOpen(true)}>
+            <button type="button" className="btn" onClick={() => setTourOpen(true)}>
               {t('tour.open')}
             </button>
-            <button className="btn" onClick={() => setLang(lang === 'ru' ? 'en' : 'ru')} aria-label="Language">
+            <button type="button" className="btn" onClick={() => setLang(lang === 'ru' ? 'en' : 'ru')} aria-label="Language">
               {lang === 'ru' ? 'EN' : 'RU'}
             </button>
             <button
+              type="button"
               className="btn"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               aria-label={t('theme.toggle')}
@@ -674,7 +675,11 @@ export default function App() {
               <ul className="questions">
                 {QUESTIONS.filter((q) => catalog?.variables.some((v) => v.id === q.variable)).map((q) => (
                   <li key={q.id}>
-                    <button className={`question ${q.variable === variable?.id ? 'active' : ''}`} onClick={() => setVariableId(q.variable)}>
+                    <button
+                      type="button"
+                      className={`question ${q.variable === variable?.id ? 'active' : ''}`}
+                      onClick={() => setVariableId(q.variable)}
+                    >
                       <span className="q-icon" aria-hidden>
                         <Icon name={q.icon} />
                       </span>
@@ -684,7 +689,7 @@ export default function App() {
                 ))}
               </ul>
               <p className="muted small">{t('simple.allHint', { n: catalog?.variables.length ?? 0 })}</p>
-              <button className="btn wide" onClick={() => setSimple(false)}>
+              <button type="button" className="btn wide" onClick={() => setSimple(false)}>
                 {t('simple.more')}
               </button>
             </>
@@ -695,7 +700,7 @@ export default function App() {
                 <ul>
                   {CASES.filter((c) => catalog?.variables.some((v) => v.id === c.variable)).map((c) => (
                     <li key={c.id}>
-                      <button className="case" onClick={() => openCase(c)}>
+                      <button type="button" className="case" onClick={() => openCase(c)}>
                         {l(c.title)}
                       </button>
                     </li>
@@ -708,6 +713,7 @@ export default function App() {
                   {rules.map((r) => (
                     <li key={r.id}>
                       <button
+                        type="button"
                         className={`case ${rule?.id === r.id ? 'active' : ''}`}
                         title={r.description ? l(r.description) : ''}
                         onClick={() => {
@@ -722,6 +728,7 @@ export default function App() {
                   {sessionRules.map((s) => (
                     <li key={s.id} className="case-row">
                       <button
+                        type="button"
                         className={`case mine ${rule?.id === s.id ? 'active' : ''}`}
                         onClick={() => {
                           setRule(rule?.id === s.id ? null : s.result)
@@ -733,6 +740,7 @@ export default function App() {
                         {l(s.result.name)}
                       </button>
                       <button
+                        type="button"
                         className="btn case-x"
                         aria-label={t('compare.remove')}
                         title={t('compare.remove')}
@@ -746,7 +754,7 @@ export default function App() {
                     </li>
                   ))}
                 </ul>
-                <button className="btn wide rb-open" onClick={() => setBuilderOpen(true)}>
+                <button type="button" className="btn wide rb-open" onClick={() => setBuilderOpen(true)}>
                   {t('rb.open')}
                 </button>
               </section>
@@ -758,6 +766,7 @@ export default function App() {
                     {found.pairs.slice(0, foundAll ? 40 : 6).map((p) => (
                       <li key={`${p.a}-${p.b}`}>
                         <button
+                          type="button"
                           className={`case ${foundPair?.a === p.a && foundPair.b === p.b ? 'active' : ''}`}
                           onClick={() => {
                             setFoundPair(foundPair?.a === p.a && foundPair.b === p.b ? null : p)
@@ -776,7 +785,7 @@ export default function App() {
                     ))}
                   </ul>
                   {found.pairs.length > 6 && (
-                    <button className="btn wide" onClick={() => setFoundAll((v) => !v)}>
+                    <button type="button" className="btn wide" onClick={() => setFoundAll((v) => !v)}>
                       {foundAll ? t('found.less') : t('found.more')}
                     </button>
                   )}
@@ -792,6 +801,7 @@ export default function App() {
                       return (
                         <li key={`${c.a}-${c.b}-${c.c}`}>
                           <button
+                            type="button"
                             className={`case ${on ? 'active' : ''}`}
                             onClick={() => {
                               setChain(on ? null : { a: c.a, b: c.b, c: c.c })
@@ -811,7 +821,7 @@ export default function App() {
                     })}
                   </ul>
                   {chains.length > 6 && (
-                    <button className="btn wide" onClick={() => setChainsAll((v) => !v)}>
+                    <button type="button" className="btn wide" onClick={() => setChainsAll((v) => !v)}>
                       {chainsAll ? t('found.less') : t('found.more')}
                     </button>
                   )}
@@ -826,6 +836,7 @@ export default function App() {
                     {g.items.map((v) => (
                       <li key={v.id}>
                         <button
+                          type="button"
                           className={`var ${v.id === variable?.id ? 'active' : ''} ${v.id === variable2?.id ? 'active-b' : ''}`}
                           onClick={() => setVariableId(v.id)}
                           title={l(v.hint)}
@@ -856,6 +867,7 @@ export default function App() {
             <RegionSearch placeholder={t('map.search')} onPick={pickRegion} />
             {simple ? (
               <button
+                type="button"
                 className={`btn ${shownLayer === 'space' ? 'on' : ''}`}
                 aria-pressed={shownLayer === 'space'}
                 onClick={() => setLayer(shownLayer === 'space' ? 'trend' : 'space')}
@@ -866,6 +878,7 @@ export default function App() {
               <div className="seg" role="group" aria-label={t('layer.title')}>
                 {(['trend', 'normal', 'last', 'space'] as const).map((x) => (
                   <button
+                    type="button"
                     key={x}
                     className={`btn ${shownLayer === x ? 'on' : ''}`}
                     aria-pressed={shownLayer === x}
@@ -896,11 +909,12 @@ export default function App() {
               </label>
             )}
             {simple ? null : variable2 ? (
-              <button className="btn" onClick={swapAB} title={t('cmp.swap')}>
+              <button type="button" className="btn" onClick={swapAB} title={t('cmp.swap')}>
                 ⇄ {t('cmp.swap')}
               </button>
             ) : (
               <button
+                type="button"
                 className={`btn ${scanOpen ? 'on' : ''}`}
                 onClick={() => {
                   setScanOpen((v) => !v)
