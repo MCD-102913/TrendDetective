@@ -36,7 +36,7 @@ export function RegionSearch({ placeholder, onPick }: { placeholder: string; onP
   }, [text, open])
 
   // the list scrolls: keep the option chosen with the arrow keys in view
-  const list = useRef<HTMLUListElement>(null)
+  const list = useRef<HTMLDivElement>(null)
   useEffect(() => {
     list.current?.children[active]?.scrollIntoView({ block: 'nearest' })
   }, [active])
@@ -80,14 +80,15 @@ export function RegionSearch({ placeholder, onPick }: { placeholder: string; onP
         }}
       />
       {shown && (
-        <ul className="search-results" role="listbox" id={listId} ref={list}>
+        <div className="search-results" role="listbox" id={listId} ref={list}>
           {results.map((r, i) => (
-            <li
+            <div
               key={r.region_id}
               id={`${listId}-${i}`}
               role="option"
+              tabIndex={-1}
               aria-selected={i === active}
-              className={i === active ? 'active' : ''}
+              className={`search-option ${i === active ? 'active' : ''}`}
               onMouseEnter={() => setActive(i)}
               onMouseDown={(e) => {
                 e.preventDefault()
@@ -96,9 +97,9 @@ export function RegionSearch({ placeholder, onPick }: { placeholder: string; onP
             >
               <span>{l(r.name)}</span>
               {r.parent_name && <span className="muted small">{l(r.parent_name)}</span>}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   )
