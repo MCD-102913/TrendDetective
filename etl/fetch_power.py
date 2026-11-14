@@ -9,7 +9,7 @@ Fine grids are block-averaged (catalog `block`, NaN-aware) so that no cube grid 
 Months after the last one with data are dropped (the stores are pre-allocated to 2029).
 
 Usage:
-    python etl/fetch_power.py --data /data/spaceapps/data [--only t2m,precip_gpm] [--force]
+    python etl/fetch_power.py --data /path/to/data [--only t2m,precip_gpm] [--force]
 """
 
 import argparse

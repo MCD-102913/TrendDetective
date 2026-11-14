@@ -94,10 +94,7 @@ the data loading step, and how the project will be packaged for others to run.
 |---|---|
 | `backend/` | API and statistics |
 | `etl/` | loaders that fetch NASA data |
-| `tools/` | batch jobs |
 | `tests/` | tests of the statistics on synthetic series |
-| `frontend/` | the web interface |
-| `docs/` | notes |
 
 Parts of the code are being added step by step.
 
