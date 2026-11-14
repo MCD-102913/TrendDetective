@@ -32,6 +32,12 @@ export function RegionSearch({ placeholder, onPick }: { placeholder: string; onP
     }
   }, [text, open])
 
+  // the list scrolls: keep the option chosen with the arrow keys in view
+  const list = useRef<HTMLUListElement>(null)
+  useEffect(() => {
+    list.current?.children[active]?.scrollIntoView({ block: 'nearest' })
+  }, [active])
+
   useEffect(() => {
     const close = (e: MouseEvent) => {
       if (box.current && !box.current.contains(e.target as Node)) setOpen(false)
@@ -66,7 +72,7 @@ export function RegionSearch({ placeholder, onPick }: { placeholder: string; onP
         }}
       />
       {open && results.length > 0 && (
-        <ul className="search-results" role="listbox">
+        <ul className="search-results" role="listbox" ref={list}>
           {results.map((r, i) => (
             <li
               key={r.region_id}
