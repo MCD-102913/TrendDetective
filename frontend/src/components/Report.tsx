@@ -219,7 +219,7 @@ export function Report() {
                   ].map(([k, label], i) => (
                     <span key={k}>
                       {i ? ' · ' : ''}
-                      <Mark ok={Boolean(s.robustness!.checks![k as 'halves'])} /> {label}
+                      <Mark ok={Boolean(s.robustness?.checks?.[k as 'halves'])} /> {label}
                     </span>
                   ))}
                 </td>
