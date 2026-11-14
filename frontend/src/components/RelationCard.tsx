@@ -70,6 +70,7 @@ export function RelationCard({ variable, variables, target, startYear, fixedOthe
 
   const option = useMemo(() => {
     if (!rel?.annual) return null
+    const annual = rel.annual
     const ink = INK[theme]
     const axis = {
       axisLine: { lineStyle: { color: ink.axis } },
@@ -85,7 +86,7 @@ export function RelationCard({ variable, variables, target, startYear, fixedOthe
       connectNulls: false,
       lineStyle: { width: 2, color },
       itemStyle: { color },
-      data: rel.annual!.years.map((y, i) => [y, v[i]]),
+      data: annual.years.map((y, i) => [y, v[i]]),
     })
     return {
       animation: false,
