@@ -81,6 +81,25 @@ OCEANS = [
 ]
 
 
+# kinds of the named places built by tools/build_places.py: (en, ru), shown next to the name
+PLACE_KINDS = {
+    "desert": ("Desert", "Пустыня"),
+    "plateau": ("Plateau", "Плато"),
+    "basin": ("Basin", "Котловина"),
+    "mountains": ("Mountains", "Горы"),
+    "plain": ("Plain", "Равнина"),
+    "delta": ("River delta", "Дельта реки"),
+    "ocean": ("Ocean", "Океан"),
+    "sea": ("Sea", "Море"),
+    "gulf": ("Gulf", "Залив"),
+    "bay": ("Bay", "Залив"),
+    "city": ("City, 50 km around", "Город, 50 км вокруг"),
+}
+PLACE_LEVEL = -3
+# order of equally good search matches: ocean regions and belts first as before, then countries, regions, places
+LEVEL_ORDER = {-2: 0, -1: 1, 0: 2, 1: 3, PLACE_LEVEL: 4}
+
+
 class Regions:
     def __init__(self, data_dir: Path):
         con = duckdb.connect()
@@ -122,6 +141,13 @@ class Regions:
                 "area_km2": None,
             }
             self._geojson[oid] = json.dumps(shapely.geometry.mapping(geom))
+        # an old ocean box with a namesake among the real sea outlines stays valid for rules but leaves the search
+        self._hidden: set[str] = set()
+        places = data_dir / "places.parquet"
+        if places.exists():
+            self._load_places(con, places)
+            named = {it["name"]["ru"] for it in self.items.values() if it["level"] == PLACE_LEVEL}
+            self._hidden = {oid for oid, _, _, ru in OCEANS if ru in named}
         for bid, s, n, en, ru in BELTS:
             self.items[bid] = {
                 "region_id": bid,
@@ -135,6 +161,32 @@ class Regions:
                 "area_km2": None,
             }
             self._geojson[bid] = json.dumps(shapely.geometry.mapping(box(-180, s, 180, n)))
+
+    def _load_places(self, con, path: Path) -> None:
+        """Named deserts, mountains, seas and cities; a city also names its country."""
+        rows = con.execute(
+            # the only value put into the text is the path of the project's own data file
+            f"""SELECT region_id, kind, name_en, name_ru, parent_id, bbox_w, bbox_s, bbox_e, bbox_n, area_km2, geojson
+                FROM '{path.as_posix()}'"""  # noqa: S608  # nosec B608
+        ).fetchall()
+        for rid, kind, en, ru, parent, w, s, e, n, area, gj in rows:
+            ken, kru = PLACE_KINDS.get(kind, (kind, kind))
+            country = self.items.get(parent) if parent else None
+            if country:
+                ken, kru = f"{ken} · {country['name']['en']}", f"{kru} · {country['name']['ru']}"
+            self.items[rid] = {
+                "region_id": rid,
+                "level": PLACE_LEVEL,
+                "kind": kind,
+                "parent_id": None,
+                "iso": None,
+                "name": {"en": en, "ru": ru or en},
+                "name_local": None,
+                "parent_name": {"en": ken, "ru": kru},
+                "bbox": [w, s, e, n],
+                "area_km2": area,
+            }
+            self._geojson[rid] = gj
 
     def get(self, rid: str) -> dict | None:
         return self.items.get(rid)
@@ -157,9 +209,13 @@ class Regions:
             return [self.items[b[0]] for b in BELTS]
         scored = []
         for it in self.items.values():
+            if it["region_id"] in self._hidden:
+                continue
             names = [x.lower() for x in (it["name"]["en"], it["name"]["ru"], it["name_local"]) if x]
             if it["level"] == -2:  # "ocean", "океан" finds every ocean region
                 names += ["ocean", "океан"]
+            elif it["level"] == PLACE_LEVEL:  # "desert", "пустыня" finds every desert
+                names += [x.lower() for x in PLACE_KINDS.get(it["kind"], ())]
             if any(x == q for x in names) or (it["iso"] or "").lower() == q:
                 rank = 0
             elif any(x.startswith(q) for x in names):
@@ -168,7 +224,7 @@ class Regions:
                 rank = 2
             else:
                 continue
-            scored.append((rank, it["level"], -(it["area_km2"] or 0), it))
+            scored.append((rank, LEVEL_ORDER.get(it["level"], 9), -(it["area_km2"] or 0), it))
         scored.sort(key=lambda x: x[:3])
         return [x[3] for x in scored[:limit]]
 

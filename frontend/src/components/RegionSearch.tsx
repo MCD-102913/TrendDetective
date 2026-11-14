@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { api, type Region } from '../api'
 import { useI18n } from '../i18n'
 
-/** Search box for territories: countries, first-level regions and latitude belts (shown when empty). */
+/** Search box for territories: countries, first-level regions, deserts, mountains, seas and cities, and latitude belts (shown when empty). */
 export function RegionSearch({ placeholder, onPick }: { placeholder: string; onPick: (r: Region) => void }) {
   const { l } = useI18n()
   const [text, setText] = useState('')
