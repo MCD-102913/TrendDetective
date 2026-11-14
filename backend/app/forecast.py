@@ -57,7 +57,7 @@ def choose(cases: list[dict]) -> dict:
     """The model with the smallest mean error and its interval multipliers, from these cases only."""
     rows = _rows(cases)
     mae = {m: float(np.mean([r["e"][m] for r in rows])) for m in OUTLOOK_MODELS}
-    best = min(mae, key=mae.get)
+    best = min(mae, key=mae.__getitem__)
     z = np.array([r["z"][best] for r in rows])
     t80 = float(np.median([c["t80"] for c in cases]))
     t95 = float(np.median([c["t95"] for c in cases]))
