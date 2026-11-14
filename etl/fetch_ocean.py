@@ -45,7 +45,7 @@ def main():
     months = sorted({d[:7]: u for d, u in granules}.items())
     first, last = months[0][0], months[-1][0]
     nt = month_index(last, first) + 1
-    parts = Parts(args.data / "cube", ["chl"], first, nt, GRID["nlat"], GRID["nlon"])
+    parts = Parts(args.data / "cube", ["chl"], first, nt, int(GRID["nlat"]), int(GRID["nlon"]))
     todo = [(m, u) for m, u in months if m not in parts.done()]
     log(f"chlorophyll: {len(months)} months {first} .. {last}, {len(todo)} to load")
     tmp = args.data / "tmp"
