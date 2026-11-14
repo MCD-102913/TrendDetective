@@ -277,7 +277,8 @@ is the cause. The direction comes from the expert; the data test the sign and th
    ```
    This checks everything except the territory codes; with `--regions` and the address of a running instance it
    checks those as well. A valid file prints `OK` with the number of rules and their chains.
-3. The server validates the file again when it is saved and refuses it on any error; the previous version is kept.
+3. The API validates the file again every time it reads it. If the file has any error, no rule from it is shown, so a
+   broken file never gives half checked results.
 
 ### For one session, on the site
 
