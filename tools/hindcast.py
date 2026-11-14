@@ -7,7 +7,7 @@ calibrated, and everything is judged by cross-validation over countries (backend
 Writes <data>/forecast/hindcast.json: per variable, for the world and per zone, the chosen model, the interval
 multipliers, the cross-validated skill and coverage and whether the site shows the outlook there.
 
-    TREND_DATA_DIR=/path/to/data python tools/hindcast.py [--workers 2]
+    TREND_DATA_DIR=/path/to/data python tools/hindcast.py [--workers 2] [--only t_850,t_500]
 """
 
 import json
@@ -51,6 +51,8 @@ def cases_of(vid: str) -> tuple[str, list[dict]]:
 def main():
     global CUBE
     workers = int(sys.argv[sys.argv.index("--workers") + 1]) if "--workers" in sys.argv else 2
+    # --only a,b: check just these variables and keep the others from the previous run
+    only = sys.argv[sys.argv.index("--only") + 1].split(",") if "--only" in sys.argv else None
     CUBE, regions = Cube(DATA), Regions(DATA)
     ref = CUBE["t2m"].grid
     land, ocean = [], []
@@ -81,7 +83,10 @@ def main():
         "variables": {},
     }
     t0 = time.time()
-    vids = [v["id"] for v in VARIABLES if v["id"] in CUBE]
+    vids = [v["id"] for v in VARIABLES if v["id"] in CUBE and (only is None or v["id"] in only)]
+    previous = DATA / "forecast" / "hindcast.json"
+    if only and previous.exists():
+        out["variables"] = json.loads(previous.read_text())["variables"]
     with mp.get_context("fork").Pool(workers) as pool:
         for vid, cases in pool.imap_unordered(cases_of, vids):
             g = forecast.evaluate(cases)
