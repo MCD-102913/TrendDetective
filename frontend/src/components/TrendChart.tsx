@@ -15,11 +15,13 @@ const decimalYear = (ym: string) => {
 }
 
 function trendLine(s: Series): [number, number][] {
-  if (!s.rate || s.rate.intercept === undefined) return []
+  const perDecade = s.rate?.per_decade
+  const intercept = s.rate?.intercept
+  if (perDecade === undefined || intercept === undefined) return []
   const valid = s.time.filter((_, i) => s.anomaly[i] !== null)
   const a = decimalYear(valid[0])
   const b = decimalYear(valid[valid.length - 1])
-  const f = (t: number) => (s.rate!.per_decade / 10) * t + s.rate!.intercept!
+  const f = (t: number) => (perDecade / 10) * t + intercept
   return [
     [a, f(a)],
     [b, f(b)],
