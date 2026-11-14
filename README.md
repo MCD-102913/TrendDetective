@@ -94,6 +94,7 @@ the data loading step, and how the project will be packaged for others to run.
 |---|---|
 | `backend/` | API and statistics |
 | `etl/` | loaders that fetch NASA data |
+| `tools/` | batch jobs: the check of trend outlooks on past data and the outlooks by country |
 | `tests/` | tests of the statistics on synthetic series |
 
 Parts of the code are being added step by step.
