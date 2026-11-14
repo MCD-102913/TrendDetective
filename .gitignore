@@ -1,0 +1,9 @@
+# data, secrets and build output stay out of the repository
+data/
+.env
+.env.*
+.venv/
+node_modules/
+dist/
+__pycache__/
+*.pyc
