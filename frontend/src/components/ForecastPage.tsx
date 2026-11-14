@@ -70,7 +70,7 @@ function SimpleForecast({ s, name, onDetailed }: { s: Series; name: string; onDe
         <span className="small muted">{t('fcs.likely', { lo: num(s.mean + o.lo80[k], d), hi: num(s.mean + o.hi80[k], d) })}</span>
       </div>
       <p className="small simple-trust">{t('fcs.trust', { skill: num((o.hindcast.skill ?? 0) * 100, 0) })}</p>
-      <button className="btn" onClick={onDetailed}>
+      <button type="button" className="btn" onClick={onDetailed}>
         {t('simple.more')}
       </button>
     </div>
@@ -329,7 +329,7 @@ export function ForecastPage() {
           <ul className="fc-list">
             {enabled.map((v) => (
               <li key={v.id}>
-                <button className={`var ${v.id === vid ? 'active' : ''}`} onClick={() => setVid(v.id)}>
+                <button type="button" className={`var ${v.id === vid ? 'active' : ''}`} onClick={() => setVid(v.id)}>
                   <span className="var-name">{l(v.name)}</span>
                   {!simple && (
                     <span className="var-meta">
@@ -416,7 +416,7 @@ export function ForecastPage() {
                   <ul>
                     {(rs as typeof avail).map((r) => (
                       <li key={r.region_id}>
-                        <button onClick={() => add(r as unknown as Region)}>
+                        <button type="button" onClick={() => add(r as unknown as Region)}>
                           <span>{l(r.name)}</span>
                           <span className="scan-rate">
                             {num(r.change ?? 0, d, true)} {u}
@@ -446,7 +446,11 @@ export function ForecastPage() {
                 {terr.map((r, i) => (
                   <span key={r.region_id} className="fc-chip" style={{ borderColor: COLORS(INK.light)[i] }}>
                     {l(r.name)}
-                    <button aria-label={t('compare.remove')} onClick={() => setTerr((ts) => ts.filter((x) => x.region_id !== r.region_id))}>
+                    <button
+                      type="button"
+                      aria-label={t('compare.remove')}
+                      onClick={() => setTerr((ts) => ts.filter((x) => x.region_id !== r.region_id))}
+                    >
                       ×
                     </button>
                   </span>
@@ -456,7 +460,14 @@ export function ForecastPage() {
               {ready && <ForecastChart list={list} names={names} />}
               <div className="rule-tabs" role="tablist">
                 {list.map((_, i) => (
-                  <button key={i} role="tab" aria-selected={tab === i} className={`btn ${tab === i ? 'on' : ''}`} onClick={() => setTab(i)}>
+                  <button
+                    type="button"
+                    key={i}
+                    role="tab"
+                    aria-selected={tab === i}
+                    className={`btn ${tab === i ? 'on' : ''}`}
+                    onClick={() => setTab(i)}
+                  >
                     {names[i]}
                   </button>
                 ))}
