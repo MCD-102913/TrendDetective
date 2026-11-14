@@ -97,6 +97,7 @@ the data loading step, and how the project will be packaged for others to run.
 | `tools/` | batch jobs: the check of trend outlooks on past data, the outlooks by country, the exhaustive search of links |
 | `rules/` | hypotheses checked against the data, in YAML |
 | `tests/` | tests of the statistics on synthetic series |
+| `frontend/` | web interface: the map and globe, outlooks, links between quantities, a simple mode |
 | `docs/` | how to write a hypothesis (`docs/RULES.md`), the check against NASA tools (`docs/VERIFICATION.md`) |
 
 Parts of the code are being added step by step.
