@@ -111,7 +111,7 @@ export function Method({ series, name, onClose }: { series: Series | null; name:
       <div className="modal" role="dialog" aria-modal="true" aria-label={t('method.title')}>
         <header className="modal-head">
           <h2>{t('method.title')}</h2>
-          <button className="btn" onClick={onClose}>
+          <button type="button" className="btn" onClick={onClose}>
             {t('method.close')}
           </button>
         </header>

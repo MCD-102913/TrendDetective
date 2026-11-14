@@ -146,7 +146,7 @@ export function VerifyCard({ s }: { s: Series }) {
     <section className="verify">
       <h3>{t('verify.title')}</h3>
       {tool && tools ? (
-        <button className="btn" onClick={run} disabled={busy}>
+        <button type="button" className="btn" onClick={run} disabled={busy}>
           {busy ? t('verify.running') : t('verify.run', { tool: tools.tools[tool].name })}
         </button>
       ) : (
