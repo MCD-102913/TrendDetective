@@ -847,7 +847,7 @@ export default function App() {
                             {l(v.name)}
                           </span>
                           <span className="var-meta">
-                            {v.source} · {t(catalog!.sources[v.source]?.type === 'model' ? 'pick.model' : 'pick.satellite')} ·{' '}
+                            {v.source} · {t(catalog?.sources[v.source]?.type === 'model' ? 'pick.model' : 'pick.satellite')} ·{' '}
                             {t('pick.since', { year: v.start.slice(0, 4) })}
                           </span>
                         </button>
