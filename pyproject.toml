@@ -1,0 +1,39 @@
+# Code quality tools for the Python part. Run: ruff check, ruff format, mypy, pyright, bandit, docformatter.
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["frontend"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "UP", "SIM", "RUF", "D", "S"]
+ignore = [
+    "D1",                        # not every function needs a docstring
+    "D203", "D213",              # docstring layout: summary on the first line
+    "D205", "D400", "D401", "D415",  # summaries are descriptive sentences, not imperative one-liners
+    "E501",                      # line length is left to the formatter
+    "E741",                      # short names such as l for a language are used on purpose
+    "B905",                      # zip over arrays of equal length by construction
+    "RUF001", "RUF002", "RUF003",  # Cyrillic text in strings and comments is intended
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]             # assert is how pytest checks
+
+[tool.ruff.format]
+quote-style = "double"
+
+# docformatter is used with --check only: in-place mode splits "et al." citations and summaries
+# that continue on the next line
+[tool.docformatter]
+wrap-summaries = 120
+wrap-descriptions = 0  # tables and examples in docstrings keep their layout
+close-quotes-on-newline = true
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+check_untyped_defs = true
+
+[tool.bandit]
+exclude_dirs = ["tests", "frontend"]
