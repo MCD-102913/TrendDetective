@@ -1,0 +1,62 @@
+# Hypotheses checked by Trend Detective. Format: docs/RULES.md.
+# Check before sending:  python tools/check_rules.py rules/rules.yaml
+version: 1
+rules:
+  - id: aerosol_dimming
+    name:
+      en: More aerosol, less sunlight, cooler days
+      ru: Больше аэрозоля, меньше света, прохладнее дни
+    description:
+      en: Haze reflects and absorbs sunlight before it reaches the ground, so the surface gets less energy and daytime highs fall.
+      ru: Мгла отражает и поглощает солнечный свет на пути к земле, поверхность получает меньше энергии, и дневные максимумы падают.
+    author: Trend Detective team
+    links:
+      - {from: aod, to: sw_down, sign: "-", max_lag: 1}
+      - {from: sw_down, to: t2m_max, sign: "+", max_lag: 1}
+    territories: countries
+
+  - id: clouds_block_sunlight
+    name:
+      en: More clouds, less sunlight at the surface
+      ru: Больше облаков, меньше света у поверхности
+    description:
+      en: A control with a known answer. If this one fails somewhere, the data there deserve a second look.
+      ru: Контроль с известным ответом. Если где-то он не подтверждается, к данным там стоит присмотреться.
+    links:
+      - {from: cloud, to: sw_down, sign: "-", max_lag: 0}
+    territories: countries
+
+  - id: rain_feeds_plants
+    name:
+      en: Rain wets the soil, wet soil greens the land
+      ru: Дождь увлажняет почву, влажная почва озеленяет землю
+    description:
+      en: In water-limited regions vegetation follows precipitation through root zone moisture, with a delay of weeks to months.
+      ru: Там, где растениям не хватает воды, растительность следует за осадками через влагу корневого слоя, с задержкой от недель до месяцев.
+    links:
+      - {from: precip_gpm, to: soil_root, sign: "+", max_lag: 2}
+      - {from: soil_root, to: ndvi, sign: "+", max_lag: 3}
+    territories: countries
+
+  - id: greening_cools
+    name:
+      en: Greener land is cooler by day
+      ru: Зелёная земля днём прохладнее
+    description:
+      en: Plants spend sunlight on evaporating water instead of heating the ground.
+      ru: Растения тратят солнечный свет на испарение воды, а не на нагрев поверхности.
+    links:
+      - {from: ndvi, to: lst_day, sign: "-", max_lag: 1}
+    territories: countries
+
+  - id: warm_ocean_less_plankton
+    name:
+      en: Warmer surface water, less phytoplankton
+      ru: Теплее вода, меньше фитопланктона
+    description:
+      en: In the stratified tropical and subtropical ocean a warmer surface layer mixes less with the nutrient-rich deep water, so chlorophyll falls.
+      ru: В тропическом и субтропическом океане тёплый верхний слой хуже перемешивается с богатой питательными веществами глубинной водой, и хлорофилла становится меньше.
+    source: "Behrenfeld et al. 2006, Nature 444, 752-755"
+    links:
+      - {from: ts_ocean, to: chl, sign: "-", max_lag: 1}
+    territories: [ocean_n_pacific_gyre, ocean_s_pacific_gyre, ocean_n_atlantic_gyre, ocean_s_atlantic_gyre, ocean_indian_gyre, ocean_eq_pacific, ocean_arabian_sea, ocean_bay_of_bengal, ocean_n_atlantic_subpolar, ocean_southern, ocean_mediterranean, ocean_humboldt, ocean_benguela]
