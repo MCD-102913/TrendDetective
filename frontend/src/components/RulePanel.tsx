@@ -58,7 +58,7 @@ export function RulePanel({ rule, currentRegion, onPick, onClose, session }: Pro
           <div className="legend-title">{l(rule.name)}</div>
           {rule.description && <div className="muted small">{l(rule.description)}</div>}
         </div>
-        <button className="btn" onClick={onClose} aria-label={t('method.close')}>
+        <button type="button" className="btn" onClick={onClose} aria-label={t('method.close')}>
           ×
         </button>
       </header>
@@ -76,7 +76,7 @@ export function RulePanel({ rule, currentRegion, onPick, onClose, session }: Pro
       {session && (
         <div className="rb-session small">
           <span>{t('rb.badge')}</span>
-          <button className="btn" onClick={() => navigator.clipboard?.writeText(session.yaml).then(() => setCopied(true))}>
+          <button type="button" className="btn" onClick={() => navigator.clipboard?.writeText(session.yaml).then(() => setCopied(true))}>
             {copied ? t('rb.copied') : t('rb.copy')}
           </button>
         </div>
@@ -110,7 +110,14 @@ export function RulePanel({ rule, currentRegion, onPick, onClose, session }: Pro
           )}
           <div className="rule-tabs" role="tablist">
             {ORDER.map((s) => (
-              <button key={s} role="tab" aria-selected={tab === s} className={`btn ${tab === s ? 'on' : ''}`} onClick={() => setTab(s)}>
+              <button
+                type="button"
+                key={s}
+                role="tab"
+                aria-selected={tab === s}
+                className={`btn ${tab === s ? 'on' : ''}`}
+                onClick={() => setTab(s)}
+              >
                 {t(`rule.${s}`)} {res.counts[s]}
               </button>
             ))}
@@ -118,7 +125,7 @@ export function RulePanel({ rule, currentRegion, onPick, onClose, session }: Pro
           <ul className="rule-list">
             {rows.slice(0, SHOWN).map((x) => (
               <li key={x.region_id}>
-                <button onClick={() => onPick(x, lastVar)}>
+                <button type="button" onClick={() => onPick(x, lastVar)}>
                   <span>{l(x.name)}</span>
                   <span className="scan-rate">{x.links.map((k) => (k.r === undefined ? '·' : num(k.r, 2, true))).join(' / ')}</span>
                 </button>
