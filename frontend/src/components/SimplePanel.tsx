@@ -15,8 +15,9 @@ const decimalYear = (ym: string) => {
 function thenNow(s: Series): { a: number; b: number; then: number; now: number } | null {
   const r = s.rate
   if (!r || r.intercept === undefined) return null
+  const intercept = r.intercept
   const valid = s.time.filter((_, i) => s.anomaly[i] !== null)
-  const f = (ym: string) => s.mean + (r.per_decade / 10) * decimalYear(ym) + r.intercept!
+  const f = (ym: string) => s.mean + (r.per_decade / 10) * decimalYear(ym) + intercept
   return {
     a: Number(valid[0].slice(0, 4)),
     b: Number(valid[valid.length - 1].slice(0, 4)),
