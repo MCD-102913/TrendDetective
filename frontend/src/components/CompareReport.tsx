@@ -26,6 +26,7 @@ function PairChart({ rel, nameA, nameB }: { rel: Relation; nameA: string; nameB:
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!ref.current || !rel.annual) return
+    const annual = rel.annual
     const ink = INK.light
     const c = echarts.init(ref.current)
     const line = (name: string, v: (number | null)[], color: string) => ({
@@ -35,7 +36,7 @@ function PairChart({ rel, nameA, nameB }: { rel: Relation; nameA: string; nameB:
       symbolSize: 4,
       lineStyle: { width: 2, color },
       itemStyle: { color },
-      data: rel.annual!.years.map((y, i) => [y, v[i]]),
+      data: annual.years.map((y, i) => [y, v[i]]),
     })
     const axis = {
       axisLine: { lineStyle: { color: ink.axis } },
@@ -84,7 +85,11 @@ export function CompareReport() {
     applyTheme('light')
     document.title = 'Trend Detective · comparison report'
     const va = view.variable ?? 't2m'
-    const vb = view.variable2!
+    const vb = view.variable2
+    if (!vb) {
+      setError('no second variable in the link')
+      return
+    }
     const target: Target = view.point
       ? { kind: 'point', point: view.point }
       : { kind: 'region', region: { region_id: view.region ?? 'global' } as Region }
