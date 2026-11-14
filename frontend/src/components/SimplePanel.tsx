@@ -106,10 +106,10 @@ export function SimplePanel({
       <TrendChart main={s} other={null} mainName={name} otherName="" simple />
       <OutlookNote s={s} />
       <div className="panel-actions">
-        <button className="btn wide" onClick={onDetailed}>
+        <button type="button" className="btn wide" onClick={onDetailed}>
           {t('simple.more')}
         </button>
-        <button className="btn" onClick={onReport}>
+        <button type="button" className="btn" onClick={onReport}>
           {t('report.open')}
         </button>
       </div>

@@ -30,7 +30,7 @@ export function ScanPanel({ variable, startYear, onPick, onClose }: Props) {
       <ul>
         {rows.map((r) => (
           <li key={r.region_id}>
-            <button onClick={() => onPick(r)}>
+            <button type="button" onClick={() => onPick(r)}>
               <span>{l(r.name)}</span>
               <span className="scan-rate">
                 {num(r.per_decade, scan!.decimals, true)} {unit(scan!.units)}
@@ -49,7 +49,7 @@ export function ScanPanel({ variable, startYear, onPick, onClose }: Props) {
           <div className="legend-title">{t('scan.title', { what: l(variable.name) })}</div>
           <div className="muted small">{t('scan.hint')}</div>
         </div>
-        <button className="btn" onClick={onClose} aria-label={t('method.close')}>
+        <button type="button" className="btn" onClick={onClose} aria-label={t('method.close')}>
           ×
         </button>
       </header>
