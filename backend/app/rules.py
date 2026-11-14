@@ -15,7 +15,9 @@ from __future__ import annotations
 import hashlib
 import re
 import time
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import yaml
@@ -280,7 +282,11 @@ class RuleStore:
 
 
 # evaluation
-def evaluate(rule: dict, territories: list[str], pair, single) -> dict:
+Pair = Callable[[str, str, str, int | None], tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray] | None]
+Single = Callable[[str, str, int | None], tuple[np.ndarray, np.ndarray, np.ndarray] | None]
+
+
+def evaluate(rule: dict, territories: list[str], pair: Pair, single: Single) -> dict:
     """Checks a rule on every territory.
 
     pair(a, b, rid, start_year) -> (x, y, year, month) on the common months, or None
@@ -295,7 +301,7 @@ def evaluate(rule: dict, territories: list[str], pair, single) -> dict:
     Territory status: confirmed (every link proven, no trend disagreement), partial (some proven, none
     contradicted), contradicted (any link has the opposite sign), not_confirmed.
     """
-    rows = []
+    rows: list[dict[str, Any]] = []
     trends: dict[tuple[str, str], dict | None] = {}
 
     def trend_of(v: str, rid: str):
