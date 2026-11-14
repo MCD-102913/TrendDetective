@@ -117,7 +117,14 @@ function TerritoryList<T extends Region>({
         {(['countries', 'regions', 'other'] as const)
           .filter((k) => counts[k])
           .map((k) => (
-            <button key={k} role="tab" aria-selected={tab === k} className={`btn ${tab === k ? 'on' : ''}`} onClick={() => setTab(k)}>
+            <button
+              type="button"
+              key={k}
+              role="tab"
+              aria-selected={tab === k}
+              className={`btn ${tab === k ? 'on' : ''}`}
+              onClick={() => setTab(k)}
+            >
               {t(`terr.${k}`)} {counts[k]}
             </button>
           ))}
@@ -125,7 +132,7 @@ function TerritoryList<T extends Region>({
       <ul className="rule-list">
         {shown.slice(0, SHOWN).map((x) => (
           <li key={x.region_id}>
-            <button className={x.region_id === currentRegion ? 'active' : ''} onClick={() => onPick(x)}>
+            <button type="button" className={x.region_id === currentRegion ? 'active' : ''} onClick={() => onPick(x)}>
               <span>
                 {l(x.name)}
                 {x.level === 1 && x.parent_name ? <span className="muted">, {l(x.parent_name)}</span> : null}
@@ -175,7 +182,7 @@ export function FoundPanel({
           </div>
           <div className="muted small">{t('found.panelHint')}</div>
         </div>
-        <button className="btn" onClick={onClose} aria-label={t('method.close')}>
+        <button type="button" className="btn" onClick={onClose} aria-label={t('method.close')}>
           ×
         </button>
       </header>
@@ -197,7 +204,7 @@ export function FoundPanel({
           <p className="muted small">{t('found.note', { k: num(d.counts.found_null, 0), n: num(d.counts.found, 0) })}</p>
         </>
       )}
-      <button className="btn wide" onClick={() => onHypothesis(pairYaml(pair))}>
+      <button type="button" className="btn wide" onClick={() => onHypothesis(pairYaml(pair))}>
         {t('found.toRule')}
       </button>
     </div>
@@ -239,7 +246,7 @@ export function ChainPanel({
           <div className="legend-title">{d ? arrow(d, l) : '…'}</div>
           <div className="muted small">{t('chain.panelHint')}</div>
         </div>
-        <button className="btn" onClick={onClose} aria-label={t('method.close')}>
+        <button type="button" className="btn" onClick={onClose} aria-label={t('method.close')}>
           ×
         </button>
       </header>
@@ -265,7 +272,7 @@ export function ChainPanel({
             onPick={(x) => onPick(x, d.a, d.b)}
           />
           <p className="muted small">{t('chain.note')}</p>
-          <button className="btn wide" onClick={() => onHypothesis(chainYaml(d))}>
+          <button type="button" className="btn wide" onClick={() => onHypothesis(chainYaml(d))}>
             {t('found.toRule')}
           </button>
         </>
@@ -318,7 +325,7 @@ export function FoundHere({
           <ul className="found-list">
             {shown.map((k) => (
               <li key={`${k.a}-${k.b}`}>
-                <button onClick={() => onLink(k.a, k.b)}>
+                <button type="button" onClick={() => onLink(k.a, k.b)}>
                   <span>
                     {l(k.a_name)} ↔ {l(k.b_name)}
                   </span>
@@ -331,7 +338,7 @@ export function FoundHere({
             ))}
           </ul>
           {links.length > 6 && (
-            <button className="btn" onClick={() => setAll((v) => !v)}>
+            <button type="button" className="btn" onClick={() => setAll((v) => !v)}>
               {all ? t('found.less') : t(total > links.length ? 'found.allShown' : 'found.all', { n: links.length })}
             </button>
           )}
@@ -344,7 +351,7 @@ export function FoundHere({
           <ul className="found-list">
             {chains.slice(0, 6).map((c) => (
               <li key={`${c.a}-${c.b}-${c.c}`}>
-                <button onClick={() => onChain({ a: c.a, b: c.b, c: c.c })}>
+                <button type="button" onClick={() => onChain({ a: c.a, b: c.b, c: c.c })}>
                   <span>{arrow(c, l)}</span>
                   <span className="muted small">
                     {t('chain.delays', { l1: c.lag1, l2: c.lag2 })} · r = {num(c.r_ac, 2, true)} → {num(c.partial, 2, true)}
