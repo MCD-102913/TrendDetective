@@ -333,7 +333,7 @@ export function LinksPage() {
             <span key={v} className="fc-chip" style={{ borderColor: SERIES_COLORS[i] }}>
               {l(name(v))}
               {vs.length > 2 && (
-                <button aria-label={t('compare.remove')} onClick={() => setVs((x) => x.filter((y) => y !== v))}>
+                <button type="button" aria-label={t('compare.remove')} onClick={() => setVs((x) => x.filter((y) => y !== v))}>
                   ×
                 </button>
               )}
@@ -363,7 +363,7 @@ export function LinksPage() {
           <b>{l(region.name)}</b>
           <RegionSearch placeholder={t('lk.where')} onPick={setRegion} />
           {region.region_id !== 'global' && (
-            <button className="btn" onClick={() => setRegion(GLOBAL)}>
+            <button type="button" className="btn" onClick={() => setRegion(GLOBAL)}>
               {t('lk.world')}
             </button>
           )}
@@ -406,7 +406,7 @@ export function LinksPage() {
                             className={`lk-cell ${on ? 'on' : ''}`}
                             style={p && linked(p) && r !== undefined ? { background: cellColor(r) } : undefined}
                           >
-                            <button onClick={() => setSel([row.id, col.id])} title={p ? t(`rel.${p.verdict}`) : ''}>
+                            <button type="button" onClick={() => setSel([row.id, col.id])} title={p ? t(`rel.${p.verdict}`) : ''}>
                               {r === undefined || r === null ? '·' : num(r, 2, true)}
                               {p && linked(p) && (
                                 <span className="lk-mark">
@@ -437,6 +437,7 @@ export function LinksPage() {
                   {data.found.chains.map((c) => (
                     <li key={`${c.a}${c.b}${c.c}`}>
                       <button
+                        type="button"
                         onClick={() =>
                           toRule(
                             ruleYaml(
@@ -496,7 +497,7 @@ export function LinksPage() {
                   </div>
                 </div>
                 {linked(pair) && (
-                  <button className="btn" onClick={() => toRule(pairRule(pair))}>
+                  <button type="button" className="btn" onClick={() => toRule(pairRule(pair))}>
                     {t('lk.toRule')}
                   </button>
                 )}
