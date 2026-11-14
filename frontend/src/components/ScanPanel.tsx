@@ -23,7 +23,7 @@ export function ScanPanel({ variable, startYear, onPick, onClose }: Props) {
     return () => ctrl.abort()
   }, [variable.id, startYear])
 
-  const list = (title: string, rows: Scan['up']) => (
+  const list = (title: string, rows: Scan['up'], { decimals, units }: Scan) => (
     <div className="scan-col">
       <h4>{title}</h4>
       {rows.length === 0 && <p className="muted small">{t('scan.none')}</p>}
@@ -33,7 +33,7 @@ export function ScanPanel({ variable, startYear, onPick, onClose }: Props) {
             <button type="button" onClick={() => onPick(r)}>
               <span>{l(r.name)}</span>
               <span className="scan-rate">
-                {num(r.per_decade, scan!.decimals, true)} {unit(scan!.units)}
+                {num(r.per_decade, decimals, true)} {unit(units)}
               </span>
             </button>
           </li>
@@ -59,8 +59,8 @@ export function ScanPanel({ variable, startYear, onPick, onClose }: Props) {
         <>
           <p className="small">{t('scan.count', { n: scan.n_robust, up: scan.n_up, down: scan.n_down })}</p>
           <div className="scan-cols">
-            {list(t('scan.up'), scan.up)}
-            {list(t('scan.down'), scan.down)}
+            {list(t('scan.up'), scan.up, scan)}
+            {list(t('scan.down'), scan.down, scan)}
           </div>
         </>
       )}
