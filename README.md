@@ -102,6 +102,30 @@ Still open: how the project will be packaged for others to run.
 
 Parts of the code are being added step by step.
 
+## Running locally
+
+The API reads a monthly data cube that the loaders in `etl/` build from the NASA archives. Some archives need
+an Earthdata token, read from `EARTHDATA_TOKEN` in the environment or in a `.env` file in the project root.
+The full cube takes a long time to download and about 13 GB of disk.
+
+```
+python -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+TREND_DATA_DIR=/path/to/data uvicorn backend.app.main:app --port 8000
+```
+
+In a second terminal:
+
+```
+cd frontend
+npm install
+npm run dev
+```
+
+The development server forwards `/api` to `http://127.0.0.1:8000`; set `API_TARGET` to use another backend.
+Tests: `pytest tests`.
+
 ## Status
 
 Work in progress during the hackathon, November 2026. See `ROADMAP.md`.
