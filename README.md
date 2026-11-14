@@ -68,7 +68,7 @@ project grows.
 |---|---|
 | API | FastAPI 0.162, Uvicorn 0.54, Pydantic 2.14 |
 | Statistics and arrays | NumPy 2.5, SciPy 1.18 |
-| Territories and maps | Shapely 2.2, Pillow 13 |
+| Territories and maps | Shapely 2.2, Pillow 13, DuckDB 2.0 |
 | Data access | Requests 2.34, xarray 2026.9, Zarr 3.4, s3fs 2026.9 |
 | NASA file formats | h5py 3.16 (HDF5 and NetCDF), pyhdf 0.11 (HDF4) |
 | Configuration and lookup | PyYAML 6.0, pycountry 26.2 |
@@ -85,8 +85,8 @@ Storage: monthly data as NumPy memory mapped arrays; precomputed results in SQLi
 | Map and globe | MapLibre GL 6.16 |
 | Charts | ECharts 6 |
 
-Still open: how the dependencies will be pinned (a requirements file or a lock file), whether DuckDB stays in
-the data loading step, and how the project will be packaged for others to run.
+The server dependencies are listed in `requirements.txt`, the browser ones in `frontend/package.json`.
+Still open: how the project will be packaged for others to run.
 
 ## Repository layout
 
