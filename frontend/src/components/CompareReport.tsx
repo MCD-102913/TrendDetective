@@ -189,10 +189,11 @@ export function CompareReport() {
     <ThemeContext.Provider value={{ theme: 'light', setTheme: () => {} }}>
       <div className="report">
         <div className="report-actions no-print">
-          <button className="btn primary" onClick={() => window.print()}>
+          <button type="button" className="btn primary" onClick={() => window.print()}>
             {t('report.print')}
           </button>
           <button
+            type="button"
             className="btn"
             onClick={() =>
               download(
