@@ -55,8 +55,8 @@ def main() -> int:
     res = rules.validate(args.file.read_text(encoding="utf-8"), BY_ID, regions)
     for w in res["warnings"]:
         print("предупреждение:", w)
-    for e in res["errors"]:
-        print("ОШИБКА:", e)
+    for err in res["errors"]:
+        print("ОШИБКА:", err)
     if res["ok"]:
         print(f"OK: правил {len(res['rules'])}")
         for r in res["rules"]:
