@@ -480,8 +480,8 @@ def forecast_map(variable_id: str = Query(..., alias="variable")):
         {
             **v,
             "region_id": rid,
-            "name": rg.get(rid)["name"],
-            "bbox": rg.get(rid)["bbox"],
+            "name": rg.require(rid)["name"],
+            "bbox": rg.require(rid)["bbox"],
         }
         for rid, v in rows.items()
     ]
@@ -620,7 +620,7 @@ def relation_matrix(req: MatrixRequest):
         anom, _ = trend.deseasonalize(yy, month)
         yrs, ann = trend.annual_means(anom, year, trend.MIN_MONTHS_ANOMALY)
         annual[vid] = {"years": yrs, "value": ann}
-    found = {"links": [], "chains": []}
+    found: dict[str, list] = {"links": [], "chains": []}
     rid = req.region_id
     if rid:
         try:
@@ -907,8 +907,8 @@ def verify_now(req: VerifyRequest):
             )
         elif req.bbox:
             box = tuple(req.bbox)
-        elif req.region_id and regions().get(req.region_id):
-            box = tuple(regions().get(req.region_id)["bbox"])
+        elif req.region_id and (found_region := regions().get(req.region_id)):
+            box = tuple(found_region["bbox"])
         else:
             raise HTTPException(422, "region_id, bbox or point is required")
         box = tuple(round(float(x), 3) for x in box)
@@ -1001,7 +1001,7 @@ def _evaluate_rule(rule: dict) -> dict:
     out = rulebook.evaluate(rule, _territory_set(rule["territories"]), pair, single)
     rg = regions()
     for row in out["territories"]:
-        info = rg.get(row["region_id"])
+        info = rg.require(row["region_id"])
         row.update(
             name=info["name"],
             bbox=info["bbox"],
