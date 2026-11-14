@@ -55,9 +55,7 @@ _lock = threading.Lock()
 _state: dict = {}
 verifier = verify.Verifier(DATA_DIR)
 space = gibs.Gibs(DATA_DIR)
-rule_store = rulebook.RuleStore(
-    DATA_DIR, Path(__file__).resolve().parents[2] / "rules" / "rules.yaml"
-)
+rule_store = rulebook.RuleStore(DATA_DIR, Path(__file__).resolve().parents[2] / "rules" / "rules.yaml")
 
 
 def cube() -> Cube:
@@ -282,8 +280,7 @@ def second_opinion(req, cat, r, year) -> list[dict]:
                 "decimals": 1 if rel else tcat["decimals"],
                 "per_decade": rate / abs(tr["mean"]) * 100 if rel else rate,
                 "agrees": bool(
-                    np.sign(rate) == np.sign(r["rate"]["per_decade"])
-                    and tr["verdict"].startswith("significant")
+                    np.sign(rate) == np.sign(r["rate"]["per_decade"]) and tr["verdict"].startswith("significant")
                 ),
             }
         )
@@ -375,18 +372,8 @@ def discoveries_summary(limit: int = Query(60, ge=1, le=700)):
 def discoveries_region(region_id: str, limit: int = Query(40, ge=1, le=700)):
     with closing(_db()) as con:
         m = _meta(con)
-        links = [
-            _names(r)
-            for r in con.execute(
-                "SELECT * FROM links WHERE region_id = ?", (region_id,)
-            )
-        ]
-        chains = [
-            _names(r)
-            for r in con.execute(
-                "SELECT * FROM chains WHERE region_id = ?", (region_id,)
-            )
-        ]
+        links = [_names(r) for r in con.execute("SELECT * FROM links WHERE region_id = ?", (region_id,))]
+        chains = [_names(r) for r in con.execute("SELECT * FROM chains WHERE region_id = ?", (region_id,))]
     links.sort(key=lambda x: (_kind_rank(x), -abs(x["r"] or 0)))
     chains.sort(key=lambda x: (_kind_rank(x), -abs(x["r_ac"] or 0)))
     return {
@@ -432,9 +419,7 @@ def chains_summary(limit: int = Query(40, ge=1, le=2000)):
 def chain_detail(a: str, b: str, c: str):
     with closing(_db()) as con:
         m = _meta(con)
-        s = con.execute(
-            "SELECT * FROM chain_summary WHERE a = ? AND b = ? AND c = ?", (a, b, c)
-        ).fetchone()
+        s = con.execute("SELECT * FROM chain_summary WHERE a = ? AND b = ? AND c = ?", (a, b, c)).fetchone()
         if s is None:
             raise HTTPException(404, "chain not found")
         rows = [
@@ -448,9 +433,7 @@ def chain_detail(a: str, b: str, c: str):
 
 
 def outlook_block(cat, r, robust, y, year, month, territory: dict) -> dict:
-    return forecast.outlook_block(
-        forecast_skill(), cat, r, robust, y, year, month, territory
-    )
+    return forecast.outlook_block(forecast_skill(), cat, r, robust, y, year, month, territory)
 
 
 @app.get("/api/forecast/skill")
@@ -535,11 +518,7 @@ def _forecast_png(vid: str, generated: str) -> bytes:
     rows = outlooks()["variables"][vid]
     own = _owner(var.grid.key, vid)
     countries = _countries()
-    avail = [
-        abs(rows[r]["change"])
-        for r in countries
-        if r in rows and rows[r].get("available")
-    ]
+    avail = [abs(rows[r]["change"]) for r in countries if r in rows and rows[r].get("available")]
     scale = float(np.percentile(avail, 95)) if avail else 1.0
     change = np.full(len(countries) + 1, np.nan)  # the last slot: cells of no country
     known = np.zeros(len(countries) + 1, dtype=bool)
@@ -551,12 +530,8 @@ def _forecast_png(vid: str, generated: str) -> bytes:
                 change[k] = v["change"]
     idx = np.where(own >= 0, own, len(countries))
     field = change[idx]
-    grey = np.where(
-        known[idx] & ~np.isfinite(field), 0.0, np.nan
-    )  # tested, no outlook: drawn neutral
-    return maps.render_forecast(
-        var, field, grey, maps.PALETTES[maps.palette_for(vid)], scale
-    )
+    grey = np.where(known[idx] & ~np.isfinite(field), 0.0, np.nan)  # tested, no outlook: drawn neutral
+    return maps.render_forecast(var, field, grey, maps.PALETTES[maps.palette_for(vid)], scale)
 
 
 @app.get("/api/forecast/map.png")
@@ -694,9 +669,7 @@ def series(req: SeriesRequest):
     y, cov = var.series(ii, jj)
     y, year, month = window(var, y, req.start_year, req.end_year)
     if not np.isfinite(y).any():
-        raise HTTPException(
-            422, "no data for this territory (for example ocean for a land variable)"
-        )
+        raise HTTPException(422, "no data for this territory (for example ocean for a land variable)")
     # leading and trailing months without data are trimmed
     valid = np.nonzero(np.isfinite(y))[0]
     y, year, month = (
@@ -707,11 +680,7 @@ def series(req: SeriesRequest):
 
     r = trend.analyze(y, year, month)
     territory.update(cov)
-    robust = (
-        trend.robustness(y, year, month)
-        if "rate" in r
-        else {"robust": False, "checks": None}
-    )
+    robust = trend.robustness(y, year, month) if "rate" in r else {"robust": False, "checks": None}
     robust["robust"] = bool(robust["robust"] and r["verdict"].startswith("significant"))
     twins = second_opinion(req, cat, r, year)
     out = {
@@ -757,9 +726,7 @@ def series(req: SeriesRequest):
     out["second_opinion"] = twins
     out["outlook"] = outlook_block(cat, r, robust, y, year, month, territory)
     if "rate" in r and cat["kind"] == "rel" and r["mean"]:
-        out["rate_rel"] = {
-            k: r["rate"][k] / abs(r["mean"]) * 100 for k in ("per_decade", "lo", "hi")
-        }
+        out["rate_rel"] = {k: r["rate"][k] / abs(r["mean"]) * 100 for k in ("per_decade", "lo", "hi")}
     return clean(out)
 
 
@@ -869,12 +836,8 @@ def scan(
     """
     cat, _ = variable(variable_id)
     rows = _scan(variable_id, start_year)
-    up = sorted((r for r in rows if r["per_decade"] > 0), key=lambda r: -r["strength"])[
-        :limit
-    ]
-    down = sorted(
-        (r for r in rows if r["per_decade"] < 0), key=lambda r: -r["strength"]
-    )[:limit]
+    up = sorted((r for r in rows if r["per_decade"] > 0), key=lambda r: -r["strength"])[:limit]
+    down = sorted((r for r in rows if r["per_decade"] < 0), key=lambda r: -r["strength"])[:limit]
     return clean(
         {
             "variable": variable_id,
@@ -1052,9 +1015,7 @@ def _evaluate_rule(rule: dict) -> dict:
         "not_confirmed": 3,
         "no_data": 4,
     }
-    out["territories"].sort(
-        key=lambda r: (order[r["status"]], -sum(abs(l.get("r", 0)) for l in r["links"]))
-    )
+    out["territories"].sort(key=lambda r: (order[r["status"]], -sum(abs(l.get("r", 0)) for l in r["links"])))
     return out
 
 
@@ -1138,9 +1099,7 @@ def rule_try(body: RulesText):
     rule = res["rules"][0]
     key = json.dumps(rule, sort_keys=True, ensure_ascii=False)
     if not _try_slots.acquire(timeout=60):
-        raise HTTPException(
-            503, "the server is busy checking other hypotheses, try again in a minute"
-        )
+        raise HTTPException(503, "the server is busy checking other hypotheses, try again in a minute")
     try:
         out = _session_result(key)
     finally:
@@ -1169,11 +1128,7 @@ def _map(vid: str, y0: int | None, y1: int | None):
 @lru_cache(maxsize=48)
 def _field(vid: str, layer: str) -> dict:
     cat, var = variable(vid)
-    return (
-        maps.compute_normal(var, vid)
-        if layer == "normal"
-        else maps.compute_last_year(var, cat["kind"])
-    )
+    return maps.compute_normal(var, vid) if layer == "normal" else maps.compute_last_year(var, cat["kind"])
 
 
 LAYER_PATTERN = "^(trend|normal|last)$"
