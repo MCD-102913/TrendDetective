@@ -89,7 +89,7 @@ export function RuleBuilder({ groups, onDone, onClose }: Props) {
       <div className="modal rb" role="dialog" aria-modal="true" aria-label={t('rb.title')}>
         <header className="modal-head">
           <h2>{t('rb.title')}</h2>
-          <button className="btn" onClick={onClose}>
+          <button type="button" className="btn" onClick={onClose}>
             {t('method.close')}
           </button>
         </header>
@@ -97,6 +97,7 @@ export function RuleBuilder({ groups, onDone, onClose }: Props) {
           <p className="muted small">{t('rb.intro')}</p>
           <div className="seg" role="tablist">
             <button
+              type="button"
               className={`btn ${tab === 'form' ? 'on' : ''}`}
               role="tab"
               aria-selected={tab === 'form'}
@@ -105,6 +106,7 @@ export function RuleBuilder({ groups, onDone, onClose }: Props) {
               {t('rb.tabForm')}
             </button>
             <button
+              type="button"
               className={`btn ${tab === 'yaml' ? 'on' : ''}`}
               role="tab"
               aria-selected={tab === 'yaml'}
@@ -168,6 +170,7 @@ export function RuleBuilder({ groups, onDone, onClose }: Props) {
                       </label>
                       {links.length > 1 && (
                         <button
+                          type="button"
                           className="btn"
                           onClick={() => setLinks((ls) => ls.filter((_, j) => j !== i))}
                           aria-label={t('compare.remove')}
@@ -179,7 +182,7 @@ export function RuleBuilder({ groups, onDone, onClose }: Props) {
                   ))}
                 </ol>
                 {links.length < MAX_LINKS && (
-                  <button className="btn" onClick={addLink}>
+                  <button type="button" className="btn" onClick={addLink}>
                     {t('rb.addLink')}
                   </button>
                 )}
@@ -207,6 +210,7 @@ export function RuleBuilder({ groups, onDone, onClose }: Props) {
                         <span key={r.region_id} className="rb-chip">
                           {l(r.name)}
                           <button
+                            type="button"
                             onClick={() => setList((ls) => ls.filter((x) => x.region_id !== r.region_id))}
                             aria-label={t('compare.remove')}
                           >
@@ -238,7 +242,7 @@ export function RuleBuilder({ groups, onDone, onClose }: Props) {
             </ul>
           )}
           <div className="rules-actions">
-            <button className="btn primary" onClick={submit} disabled={busy}>
+            <button type="button" className="btn primary" onClick={submit} disabled={busy}>
               {busy ? t('rb.checking') : t('rb.check')}
             </button>
             <span className="muted small">{t('rb.session')}</span>
