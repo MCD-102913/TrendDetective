@@ -57,9 +57,36 @@ Monthly global records, regridded to a common grid of 0.5 to 1 degree.
 * **NASA Harmony** with the Giovanni averaging service: area averaged series computed by NASA, to verify ours.
 * **NASA GIBS** (the imagery behind NASA Worldview): recent satellite pictures shown on the map for context.
 
-## Built with
+## Stack
 
-Python (FastAPI, NumPy, SciPy, Shapely) on the server; React, Vite, MapLibre GL and ECharts in the browser.
+We have settled on the main stack. The list of dependencies is not final yet and may still change as the
+project grows.
+
+**Server** (Python 3.14)
+
+| Purpose | Packages (versions we use now) |
+|---|---|
+| API | FastAPI 0.162, Uvicorn 0.54, Pydantic 2.14 |
+| Statistics and arrays | NumPy 2.5, SciPy 1.18 |
+| Territories and maps | Shapely 2.2, Pillow 13 |
+| Data access | Requests 2.34, xarray 2026.9, Zarr 3.4, s3fs 2026.9 |
+| NASA file formats | h5py 3.16 (HDF5 and NetCDF), pyhdf 0.11 (HDF4) |
+| Configuration and lookup | PyYAML 6.0, pycountry 26.2 |
+| Tests | pytest 9.2 |
+
+Storage: monthly data as NumPy memory mapped arrays; precomputed results in SQLite and JSON.
+
+**Browser**
+
+| Purpose | Packages |
+|---|---|
+| Interface | React 19, TypeScript 7 |
+| Build | Vite 8 |
+| Map and globe | MapLibre GL 6.16 |
+| Charts | ECharts 6 |
+
+Still open: how the dependencies will be pinned (a requirements file or a lock file), whether DuckDB stays in
+the data loading step, and how the project will be packaged for others to run.
 
 ## Repository layout
 
