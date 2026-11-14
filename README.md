@@ -94,7 +94,7 @@ the data loading step, and how the project will be packaged for others to run.
 |---|---|
 | `backend/` | API and statistics |
 | `etl/` | loaders that fetch NASA data |
-| `tools/` | batch jobs: the check of trend outlooks on past data and the outlooks by country |
+| `tools/` | batch jobs: the check of trend outlooks on past data, the outlooks by country, the exhaustive search of links |
 | `rules/` | hypotheses checked against the data, in YAML |
 | `tests/` | tests of the statistics on synthetic series |
 | `docs/` | how to write a hypothesis (`docs/RULES.md`) |
