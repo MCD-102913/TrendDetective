@@ -139,6 +139,10 @@ class Regions:
     def get(self, rid: str) -> dict | None:
         return self.items.get(rid)
 
+    def require(self, rid: str) -> dict:
+        """The territory, for ids taken from the data itself; an unknown id is a bug, not a user error."""
+        return self.items[rid]
+
     def geojson(self, rid: str) -> str | None:
         return self._geojson.get(rid)
 
