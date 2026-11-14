@@ -3,6 +3,7 @@ import { useI18n } from '../i18n'
 import { plainVerdict } from '../plain'
 import { shownRate } from '../rate'
 import { FoundHere } from './Found'
+import { ProfileCard } from './ProfileCard'
 import { Mark } from './Icon'
 import { OutlookNote } from './Outlook'
 import { RegionSearch } from './RegionSearch'
@@ -80,6 +81,7 @@ export function Verdict({ s, name, tone }: { s: Series; name: string; tone: 'mai
 
 type Props = {
   variable: Variable | null
+  onPickVariable: (id: string) => void
   variables: Variable[]
   target: Target
   startYear: number | null
@@ -100,6 +102,7 @@ type Props = {
 
 export function TrendPanel({
   variable,
+  onPickVariable,
   variables,
   target,
   startYear,
@@ -162,6 +165,15 @@ export function TrendPanel({
       {compareNote && <p className="note accent">{compareNote}</p>}
       <TrendChart main={main} other={other} mainName={nameOf(main)} otherName={other ? nameOf(other) : ''} />
       {!other && <OutlookNote s={main} />}
+      {variable.profile && (
+        <ProfileCard
+          quantity={variable.profile.quantity}
+          current={variable.id}
+          target={target}
+          startYear={startYear}
+          onPick={onPickVariable}
+        />
+      )}
       <div className="panel-actions">
         <button type="button" className="btn wide" onClick={onMethod}>
           {t('method.open')}

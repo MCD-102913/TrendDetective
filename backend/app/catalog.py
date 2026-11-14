@@ -23,6 +23,7 @@ SPHERES = {
     "cryosphere": {"en": "Snow and ice", "ru": "Снег и лёд"},
     "energy": {"en": "Clouds and sunlight", "ru": "Облака и солнечный свет"},
     "ocean": {"en": "Ocean", "ru": "Океан"},
+    "upper_air": {"en": "Atmosphere by height", "ru": "Атмосфера по высоте"},
 }
 
 SOURCES = {
@@ -565,6 +566,99 @@ VARIABLES += [
         hint_ru="Температура поверхности по MERRA-2; над океаном это температура воды. Тёплый верхний слой хуже перемешивается, и фитопланктону не хватает питательных веществ.",
     ),
 ]
+
+# Pressure levels of MERRA-2 (etl/fetch_merra_levels.py): one variable per quantity and level. `profile` ties the
+# levels of one quantity together for the trend-by-height chart; heights are those of the standard atmosphere.
+HEIGHT_KM = {850: 1.5, 700: 3.0, 500: 5.6, 300: 9.2, 200: 11.8, 100: 16.2, 50: 20.6, 10: 31.1}
+LEVELS = "earthdata:M2IMNPASM.5.12.4"
+
+
+def _height(p: int) -> tuple[str, str]:
+    km = HEIGHT_KM[p]
+    return f"{p} hPa, about {km:g} km", f"{p} гПа, около {km:g} км".replace(".", ",")
+
+
+def _layer_hint(p: int) -> tuple[str, str]:
+    if p >= 300:
+        return (
+            "Troposphere, the layer where weather happens: it warms together with the surface.",
+            "Тропосфера, слой, где происходит погода: она теплеет вместе с поверхностью.",
+        )
+    if p >= 100:
+        return (
+            "Near the tropopause, the boundary between the troposphere and the stratosphere.",
+            "Около тропопаузы, границы между тропосферой и стратосферой.",
+        )
+    return (
+        "Stratosphere: more greenhouse gases make it cool while the air below warms, the fingerprint of the greenhouse effect.",
+        "Стратосфера: с ростом парниковых газов она охлаждается, пока воздух внизу теплеет. Это отпечаток парникового эффекта.",
+    )
+
+
+for _p in (850, 700, 500, 300, 200, 100, 50, 10):
+    (_en, _ru), (_hen, _hru) = _height(_p), _layer_hint(_p)
+    VARIABLES.append(
+        {
+            **_v(
+                f"t_{_p}",
+                "MERRA-2",
+                LEVELS,
+                "T",
+                "upper_air",
+                "°C",
+                f"Air temperature at {_en}",
+                f"Температура воздуха на {_ru}",
+                hint_en=_hen,
+                hint_ru=_hru,
+            ),
+            "profile": {"quantity": "t", "level": _p, "height_km": HEIGHT_KM[_p]},
+        }
+    )
+for _p in (850, 500, 300):
+    _en, _ru = _height(_p)
+    VARIABLES.append(
+        {
+            **_v(
+                f"rh_{_p}",
+                "MERRA-2",
+                LEVELS,
+                "RH",
+                "upper_air",
+                "%",
+                f"Relative humidity at {_en}",
+                f"Относительная влажность на {_ru}",
+                decimals=1,
+                hint_en="How close the air is to saturation. Warmer air holds more water, so humidity tells whether moisture keeps up with warming.",
+                hint_ru="Насколько воздух близок к насыщению. Тёплый воздух вмещает больше воды, и влажность показывает, успевает ли влага за потеплением.",
+            ),
+            "profile": {"quantity": "rh", "level": _p, "height_km": HEIGHT_KM[_p]},
+        }
+    )
+for _p in (50, 10):
+    _en, _ru = _height(_p)
+    VARIABLES.append(
+        {
+            **_v(
+                f"o3_{_p}",
+                "MERRA-2",
+                LEVELS,
+                "O3",
+                "upper_air",
+                "ppmv",
+                f"Ozone at {_en}",
+                f"Озон на {_ru}",
+                hint_en="Stratospheric ozone, the layer that blocks ultraviolet light: it thinned until the late 1990s and is slowly recovering.",
+                hint_ru="Стратосферный озон, слой, задерживающий ультрафиолет: он истончался до конца 1990-х и медленно восстанавливается.",
+            ),
+            "profile": {"quantity": "o3", "level": _p, "height_km": HEIGHT_KM[_p]},
+        }
+    )
+
+PROFILES = {
+    "t": {"en": "Air temperature", "ru": "Температура воздуха"},
+    "rh": {"en": "Relative humidity", "ru": "Относительная влажность"},
+    "o3": {"en": "Ozone", "ru": "Озон"},
+}
 
 BY_ID = {v["id"]: v for v in VARIABLES}
 

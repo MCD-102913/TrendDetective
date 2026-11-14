@@ -26,6 +26,13 @@ export const QUESTIONS: Question[] = [
   { id: 'rain', icon: 'rain', variable: 'precip_gpm', yes: 'up', title: { en: 'Is there more rain?', ru: 'Дождей становится больше?' } },
   { id: 'ocean', icon: 'waves', variable: 'ts_ocean', yes: 'up', title: { en: 'Is the ocean warming?', ru: 'Океан теплеет?' } },
   {
+    id: 'stratosphere',
+    icon: 'altitude',
+    variable: 't_50',
+    yes: 'down',
+    title: { en: 'Is the upper atmosphere cooling?', ru: 'Остывает ли верхняя атмосфера?' },
+  },
+  {
     id: 'ice',
     icon: 'iceberg',
     variable: 'sea_ice',

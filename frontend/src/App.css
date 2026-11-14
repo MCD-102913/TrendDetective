@@ -1750,3 +1750,10 @@ td:has(> .icon) {
   max-width: 260px;
   padding: 4px 6px;
 }
+
+.profile-card {
+  margin-top: 14px;
+}
+.profile-card h3 {
+  margin-bottom: 4px;
+}

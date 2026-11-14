@@ -6,6 +6,7 @@
     GET  /api/regions/{id}                  one territory
     GET  /api/regions/{id}/geometry         GeoJSON outline
     POST /api/series                        monthly series + trend report for a variable and a territory
+    POST /api/profile                       trend by height: one quantity at every pressure level of a territory
     GET  /api/map/meta?variable=            scale, period and significance summary of the trend map
     GET  /api/map.png?variable=             the trend map as a Web-Mercator PNG overlay
     GET  /api/cell?variable=&lat=&lon=      rate and significance of one map cell (hover)
@@ -42,7 +43,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from . import discovery, forecast, gibs, maps, rules as rulebook, terrain as terrain_mod, trend, verify
-from .catalog import BY_ID, SOURCES, SPHERES, TWINS, VARIABLES
+from .catalog import BY_ID, PROFILES, SOURCES, SPHERES, TWINS, VARIABLES
 from .cube import Cube, Grid
 from .regions import Regions, geometry_from_request
 
@@ -130,9 +131,10 @@ def variables():
                 "end": cv.t1,
                 "resolution": [cv.grid.dlat, cv.grid.dlon],
                 "palette": maps.palette_for(v["id"]),
+                "profile": v.get("profile"),
             }
         )
-    return {"spheres": SPHERES, "sources": SOURCES, "variables": out}
+    return {"spheres": SPHERES, "sources": SOURCES, "profiles": PROFILES, "variables": out}
 
 
 @app.get("/api/regions")
@@ -263,7 +265,9 @@ def terrain_types(region_id: str | None = None):
     counts = terrain.counts(grid.lat[ii], grid.lon[jj])
     return {
         "year": terrain.year,
-        "types": [{"id": t, "name": terrain.label(t), "cells": n} for t, n in sorted(counts.items(), key=lambda x: -x[1])],
+        "types": [
+            {"id": t, "name": terrain.label(t), "cells": n} for t, n in sorted(counts.items(), key=lambda x: -x[1])
+        ],
     }
 
 
@@ -690,6 +694,57 @@ def relation_matrix(req: MatrixRequest):
             "pairs": pairs,
             "annual": annual,
             "found": found,
+        }
+    )
+
+
+class ProfileRequest(SeriesRequest):
+    variable: str = ""
+    quantity: str
+
+
+@app.post("/api/profile")
+def profile(req: ProfileRequest):
+    """Trend by height: the rate of one quantity (temperature, humidity, ozone) at every pressure level, on one territory."""
+    if req.quantity not in PROFILES:
+        raise HTTPException(404, "unknown quantity")
+    c = cube()
+    levels = [v for v in VARIABLES if (v.get("profile") or {}).get("quantity") == req.quantity and v["id"] in c]
+    if not levels:
+        raise HTTPException(404, "no levels loaded for this quantity")
+    rows, territory = [], None
+    for v in sorted(levels, key=lambda x: -x["profile"]["level"]):
+        var = c[v["id"]]
+        ii, jj, terr = resolve(req, var)
+        territory = territory or terr
+        y, _ = var.series(ii, jj)
+        y, year, month = window(var, y, req.start_year, req.end_year)
+        valid = np.nonzero(np.isfinite(y))[0]
+        row = {"variable": v["id"], "level": v["profile"]["level"], "height_km": v["profile"]["height_km"]}
+        if len(valid) < 24:
+            rows.append({**row, "verdict": "no_data"})
+            continue
+        sl = slice(valid[0], valid[-1] + 1)
+        r = trend.analyze(y[sl], year[sl], month[sl])
+        rows.append(
+            {
+                **row,
+                "verdict": r["verdict"],
+                "rate": r.get("rate"),
+                "mean": r["mean"],
+                "years": [int(year[sl][0]), int(year[sl][-1])],
+            }
+        )
+    first = levels[0]
+    return clean(
+        {
+            "quantity": req.quantity,
+            "name": PROFILES[req.quantity],
+            "units": first["units"],
+            "decimals": first["decimals"],
+            "source": first["source"],
+            "territory": territory,
+            "levels": rows,
         }
     )
 

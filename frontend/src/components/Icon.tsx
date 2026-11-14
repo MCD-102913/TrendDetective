@@ -58,6 +58,12 @@ const SHAPES = {
     </>
   ),
   moon: <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />,
+  altitude: (
+    <>
+      <path d="M3 20h18M3 15.5h18" />
+      <path d="M12 12V3M8.5 6.5L12 3l3.5 3.5" />
+    </>
+  ),
   check: <path d="M5 12.5l4.5 4.5L19 7.5" />,
   cross: <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" />,
   open: <circle cx="12" cy="12" r="5.5" />,

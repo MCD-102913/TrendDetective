@@ -223,6 +223,11 @@ const EN = {
   'layer.normal': 'Normal',
   'layer.last': 'Last year',
   'layer.space': 'From space',
+  'profile.title': 'Trend by height: {what}',
+  'profile.level': '{p} hPa · {km} km',
+  'profile.ci': '95% interval: {lo} to {hi}',
+  'profile.note':
+    'Rate of change per decade at each height ({a} to {b}). Coloured: statistically significant, red rising, blue falling; the line is the 95% interval. Click a level to open it.',
   'terrain.label': 'Only',
   'terrain.all': 'the whole territory',
   'terrain.cells': '{n} cells',
@@ -706,6 +711,11 @@ const RU: typeof EN = {
   'layer.normal': 'Норма',
   'layer.last': 'Прошлый год',
   'layer.space': 'Из космоса',
+  'profile.title': 'Тренд по высоте: {what}',
+  'profile.level': '{p} гПа · {km} км',
+  'profile.ci': '95%-й интервал: от {lo} до {hi}',
+  'profile.note':
+    'Скорость изменения за 10 лет на каждой высоте (с {a} по {b}). Цветом выделено статистически значимое: красный растёт, синий падает; линия показывает 95%-й интервал. Нажмите на уровень, чтобы открыть его.',
   'terrain.label': 'Только',
   'terrain.all': 'вся территория',
   'terrain.cells': '{n} кл.',

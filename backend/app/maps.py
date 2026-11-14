@@ -220,6 +220,10 @@ SEQ_OF = {
     **{v: "green" for v in ("ndvi", "evi", "chl")},
     **{v: "ice" for v in ("snow_depth", "snow_frac", "gldas_swe", "sea_ice")},
 }
+# pressure levels: temperature and humidity look like their surface versions, ozone keeps the default palette
+_T_LEVELS, _RH_LEVELS = (850, 700, 500, 300, 200, 100, 50, 10), (850, 500, 300)
+PALETTE_OF.update({f"rh_{p}": "wet" for p in _RH_LEVELS} | {f"o3_{p}": "air" for p in (50, 10)})
+SEQ_OF.update({f"t_{p}": "heat" for p in _T_LEVELS} | {f"rh_{p}": "rain" for p in _RH_LEVELS})
 LOG_VARS = {"chl", "omi_no2"}  # span orders of magnitude: a linear scale shows only the hot spots
 
 

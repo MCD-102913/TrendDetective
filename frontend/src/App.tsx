@@ -1063,6 +1063,7 @@ export default function App() {
           ) : (
             <TrendPanel
               variable={variable}
+              onPickVariable={setVariableId}
               variables={catalog?.variables ?? []}
               target={target}
               startYear={effectiveStart}

@@ -14,12 +14,15 @@ export type Variable = {
   end: string
   resolution: [number, number]
   palette: string
+  /** set for pressure level variables: the quantity and its level, for the trend-by-height chart */
+  profile?: { quantity: string; level: number; height_km: number } | null
 }
 
 export type Catalog = {
   spheres: Record<string, L10n>
   sources: Record<string, L10n & { type: 'model' | 'satellite' }>
   variables: Variable[]
+  profiles?: Record<string, L10n>
 }
 
 export type Region = {
@@ -372,6 +375,23 @@ export type SpaceLayer = {
 /** A territory; `terrain` narrows a region to the cells of one terrain type (forests, croplands...). */
 export type Target = { kind: 'region'; region: Region; terrain?: string | null } | { kind: 'point'; point: [number, number] }
 
+export type Profile = {
+  quantity: string
+  name: L10n
+  units: string
+  decimals: number
+  source: string
+  levels: {
+    variable: string
+    level: number
+    height_km: number
+    verdict: Verdict | 'no_data'
+    rate?: Rate
+    mean?: number
+    years?: [number, number]
+  }[]
+}
+
 export type TerrainTypes = { year: number | null; types: { id: string; name: L10n; cells: number }[] }
 
 const where = (target: Target) =>
@@ -426,6 +446,13 @@ export const api = {
         ...where(target),
       }),
     }).then(json<Relation>),
+  profile: (quantity: string, target: Target, startYear: number | null, signal?: AbortSignal) =>
+    fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal,
+      body: JSON.stringify({ quantity, start_year: startYear, ...where(target) }),
+    }).then(json<Profile>),
   scan: (variable: string, startYear: number | null, signal?: AbortSignal) =>
     fetch(`/api/scan?${q({ variable, start_year: startYear })}`, { signal }).then(json<Scan>),
   rules: () => fetch('/api/rules').then(json<{ version: string; rules: RuleCard[] }>),
