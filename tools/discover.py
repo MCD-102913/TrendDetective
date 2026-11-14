@@ -130,8 +130,8 @@ def main():
     found_null = discovery.confirmed_mask(null)
     print(f"tests {len(real)}, found {int(found.sum())}, found on shifted pairs {int(found_null.sum())}", flush=True)
 
-    level = {rid: regions.get(rid)["level"] for rid in TERR}
-    tested = defaultdict(int)
+    level = {rid: regions.require(rid)["level"] for rid in TERR}
+    tested: defaultdict[tuple[str, str], int] = defaultdict(int)
     link_rows, by_region = [], defaultdict(list)
     for (a, b, rid), res, f in zip(keys, real, found):
         tested[(a, b)] += 1
@@ -161,7 +161,8 @@ def main():
     print(f"full-period results ({time.time() - t0:.0f}s)", flush=True)
 
     # chains from the links of each territory; a chain inside one model (both links) is not kept
-    chain_rows, chain_tested = [], defaultdict(int)
+    chain_rows: list[dict] = []
+    chain_tested: defaultdict[tuple[str, str, str], int] = defaultdict(int)
     for rid, links in by_region.items():
         split_of = {(k["a"], k["b"]): k["split"] for k in links}
         kind_of = {(k["a"], k["b"]): discovery.pair_kind(k["a"], k["b"], SOURCES) for k in links}
