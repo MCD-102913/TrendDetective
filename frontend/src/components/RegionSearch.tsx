@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { api, type Region } from '../api'
 import { useI18n } from '../i18n'
 
@@ -10,6 +10,9 @@ export function RegionSearch({ placeholder, onPick }: { placeholder: string; onP
   const [results, setResults] = useState<Region[]>([])
   const [active, setActive] = useState(0)
   const box = useRef<HTMLDivElement>(null)
+  // the input keeps the focus; screen readers follow the highlighted option through aria-activedescendant
+  const listId = useId()
+  const shown = open && results.length > 0
 
   useEffect(() => {
     if (!open) return
@@ -59,6 +62,11 @@ export function RegionSearch({ placeholder, onPick }: { placeholder: string; onP
         value={text}
         placeholder={placeholder}
         aria-label={placeholder}
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={shown}
+        aria-controls={listId}
+        aria-activedescendant={shown && results[active] ? `${listId}-${active}` : undefined}
         onFocus={() => setOpen(true)}
         onChange={(e) => {
           setText(e.target.value)
@@ -71,11 +79,12 @@ export function RegionSearch({ placeholder, onPick }: { placeholder: string; onP
           else if (e.key === 'Escape') setOpen(false)
         }}
       />
-      {open && results.length > 0 && (
-        <ul className="search-results" role="listbox" ref={list}>
+      {shown && (
+        <ul className="search-results" role="listbox" id={listId} ref={list}>
           {results.map((r, i) => (
             <li
               key={r.region_id}
+              id={`${listId}-${i}`}
               role="option"
               aria-selected={i === active}
               className={i === active ? 'active' : ''}
