@@ -150,8 +150,8 @@ at least 10. The current list is also served by the API: `GET /api/variables`.
 |---|---|---|---|---|
 | `gldas_soil` | Soil moisture, top 10 cm | GLDAS | kg/m² | 2000 |
 | `gldas_root` | Root zone soil moisture | GLDAS | kg/m² | 2000 |
-| `soil_top` | Surface soil wetness | MERRA-2 | 0 to 1 | 1981 |
-| `soil_root` | Root zone soil wetness | MERRA-2 | 0 to 1 | 1981 |
+| `soil_top` | Surface soil wetness | MERRA-2 | fraction (0 to 1) | 1981 |
+| `soil_root` | Root zone soil wetness | MERRA-2 | fraction (0 to 1) | 1981 |
 | `ts` | Surface skin temperature | MERRA-2 | °C | 1981 |
 | `ndvi` | Vegetation greenness (NDVI) | MODIS Terra | none | 2000 |
 | `evi` | Vegetation index (EVI) | MODIS Terra | none | 2000 |
@@ -163,9 +163,9 @@ at least 10. The current list is also served by the API: `GET /api/variables`.
 | Code | Quantity | Source | Units | From |
 |---|---|---|---|---|
 | `snow_depth` | Snow depth | MERRA-2 | cm | 1981 |
-| `snow_frac` | Snow covered fraction | MERRA-2 | 0 to 1 | 1981 |
+| `snow_frac` | Snow covered fraction | MERRA-2 | fraction (0 to 1) | 1981 |
 | `gldas_swe` | Snow water equivalent | GLDAS | mm | 2000 |
-| `sea_ice` | Sea ice fraction | MERRA-2 | 0 to 1 | 1981 |
+| `sea_ice` | Sea ice fraction | MERRA-2 | fraction (0 to 1) | 1981 |
 
 ### Clouds and sunlight
 
@@ -174,7 +174,7 @@ at least 10. The current list is also served by the API: `GET /api/variables`.
 | `cloud` | Cloud amount | CERES / MODIS | % | 2001 |
 | `aod` | Aerosol optical depth | CERES / MODIS | none | 2001 |
 | `sw_down` | Sunlight reaching the surface | CERES / MODIS | W/m² | 2001 |
-| `albedo` | Surface albedo | CERES / MODIS | 0 to 1 | 2001 |
+| `albedo` | Surface albedo | CERES / MODIS | fraction (0 to 1) | 2001 |
 | `airs_olr` | Outgoing longwave radiation | AIRS | W/m² | 2002 |
 
 ### Ocean
