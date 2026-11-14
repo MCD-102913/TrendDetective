@@ -90,18 +90,19 @@ export function PageShell({
           <Nav active={active} variable={variable} region={region} simple={!!simple} />
           {onSimple && (
             <div className="seg" role="group" aria-label={t('view.title')}>
-              <button className={`btn ${simple ? 'on' : ''}`} aria-pressed={!!simple} onClick={() => onSimple(true)}>
+              <button type="button" className={`btn ${simple ? 'on' : ''}`} aria-pressed={!!simple} onClick={() => onSimple(true)}>
                 {t('view.simple')}
               </button>
-              <button className={`btn ${!simple ? 'on' : ''}`} aria-pressed={!simple} onClick={() => onSimple(false)}>
+              <button type="button" className={`btn ${!simple ? 'on' : ''}`} aria-pressed={!simple} onClick={() => onSimple(false)}>
                 {t('view.detailed')}
               </button>
             </div>
           )}
-          <button className="btn" onClick={() => setLang(lang === 'ru' ? 'en' : 'ru')} aria-label="Language">
+          <button type="button" className="btn" onClick={() => setLang(lang === 'ru' ? 'en' : 'ru')} aria-label="Language">
             {lang === 'ru' ? 'EN' : 'RU'}
           </button>
           <button
+            type="button"
             className="btn"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             aria-label={t('theme.toggle')}
