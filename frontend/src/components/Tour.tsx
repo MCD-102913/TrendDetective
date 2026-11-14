@@ -103,16 +103,16 @@ export function Tour({ onClose }: { onClose: () => void }) {
         <h3>{t(`tour.${step.key}.title` as Key)}</h3>
         <p>{t(`tour.${step.key}.text` as Key)}</p>
         <div className="tour-actions">
-          <button className="btn" onClick={close}>
+          <button type="button" className="btn" onClick={close}>
             {t('tour.skip')}
           </button>
           <span className="tour-spacer" />
           {i > 0 && (
-            <button className="btn" onClick={() => setI(i - 1)}>
+            <button type="button" className="btn" onClick={() => setI(i - 1)}>
               {t('tour.prev')}
             </button>
           )}
-          <button className="btn primary" onClick={() => (last ? close() : setI(i + 1))} autoFocus>
+          <button type="button" className="btn primary" onClick={() => (last ? close() : setI(i + 1))} autoFocus>
             {last ? t('tour.done') : t('tour.next')}
           </button>
         </div>

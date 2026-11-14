@@ -60,13 +60,13 @@ export function ComparePanel({
       </div>
       <RelationCard variable={varA} variables={variables} target={target} startYear={startYear} fixedOther={varB.id} />
       <div className="panel-actions">
-        <button className="btn wide" onClick={onMethod}>
+        <button type="button" className="btn wide" onClick={onMethod}>
           {t('method.open')}
         </button>
-        <button className="btn" onClick={onReport}>
+        <button type="button" className="btn" onClick={onReport}>
           {t('cmp.report')}
         </button>
-        <button className="btn" onClick={onCsv}>
+        <button type="button" className="btn" onClick={onCsv}>
           CSV
         </button>
       </div>
