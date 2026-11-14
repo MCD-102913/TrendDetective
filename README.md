@@ -132,7 +132,7 @@ Work in progress during the hackathon, November 2026. See `ROADMAP.md`.
 
 ## Credits
 
-Data: NASA (MERRA-2, GPM IMERG, CERES, MODIS, GLDAS, AIRS, OMI, NASA POWER, NASA GIBS, Earthdata taken from GES DISC: https://disc.gfsc.nasa.gov/datasets/) and
+Data: NASA (MERRA-2, GPM IMERG, CERES, MODIS, GLDAS, AIRS, OMI, NASA POWER, NASA GIBS, Earthdata taken from GES DISC: https://disc.gsfc.nasa.gov/datasets/) and
 Natural Earth. Built for the NASA Space Apps Challenge 2026.
 
 ## License
