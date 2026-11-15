@@ -754,6 +754,7 @@ def profile(req: ProfileRequest):
 
 class AskRequest(SeriesRequest):
     variable: str = ""
+    other: str = ""  # the second variable when the visitor compares two
     goal: str
     text: str | None = None
     mode: str = "detailed"
@@ -871,6 +872,7 @@ def ai_ask(req: AskRequest, request: Request):
         "mode": req.mode,
         "lang": lang,
         "variable": req.variable,
+        "other": req.other,
         "where": [req.region_id, req.point, req.terrain, req.polygon],
         "where_name": where,
         "start_year": req.start_year,

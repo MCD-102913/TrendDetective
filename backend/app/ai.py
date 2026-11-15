@@ -270,7 +270,8 @@ class Agent:
         if not key:
             raise AiError("no_key", 503)
         ident = json.dumps(
-            {k: q.get(k) for k in ("goal", "text", "mode", "lang", "variable", "where", "start_year")}, sort_keys=True
+            {k: q.get(k) for k in ("goal", "text", "mode", "lang", "variable", "other", "where", "start_year")},
+            sort_keys=True,
         )
         cache = self.cache_dir / (hashlib.sha256((MODEL + ident).encode()).hexdigest()[:24] + ".json")
         if cache.exists() and time.time() - cache.stat().st_mtime < CACHE_TTL_S:
@@ -312,10 +313,13 @@ class Agent:
         mode = "simple" if q.get("mode") == "simple" else "detailed"
         system = SYSTEM.format(calls=MAX_TOOL_CALLS, lang=lang, style=STYLE[mode], catalog=self._catalog_text())
         cur = self.catalog.get(q.get("variable") or "")
+        oth = self.catalog.get(q.get("other") or "")
         task = (
             f"Territory: {q['where_name']}.\n"
             f"Current variable: {cur['id'] + ' (' + cur['name']['en'] + ')' if cur else 'none'}.\n"
-            f"Goal: {GOALS[goal]}\n" + (f'The visitor writes: "{text}"\n' if text else "")
+            + (f"Second variable on the visitor's map: {oth['id']} ({oth['name']['en']}).\n" if oth else "")
+            + f"Goal: {GOALS[goal]}\n"
+            + (f'The visitor writes: "{text}"\n' if text else "")
         )
         contents: list[dict] = [{"role": "user", "parts": [{"text": task}]}]
         evidence: dict[tuple, dict] = {}
