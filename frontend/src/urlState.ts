@@ -4,6 +4,7 @@
 //   v2     second variable: compare mode (two synchronized maps, one territory)
 //   layer  normal | last | space (the trend map when absent)
 //   terrain  terrain type that narrows the region (rainforest, cropland...)
+//   area     an area drawn on the map: "lon,lat;lon,lat;..." (instead of r and pt)
 export type ViewState = {
   variable: string | null
   variable2: string | null
@@ -15,6 +16,16 @@ export type ViewState = {
   globe: boolean
   layer?: 'normal' | 'last' | 'space' | null
   terrain?: string | null
+  area?: [number, number][] | null
+}
+
+/** "lon,lat;lon,lat;..." -> vertices, or null when there are fewer than three valid ones. */
+function readArea(text: string | null): [number, number][] | null {
+  const pts = (text ?? '')
+    .split(';')
+    .map((pair) => pair.split(',').map(Number))
+    .filter((xy): xy is [number, number] => xy.length === 2 && xy.every(Number.isFinite))
+  return pts.length >= 3 ? pts : null
 }
 
 export function readView(search: string = location.search): ViewState {
@@ -33,6 +44,7 @@ export function readView(search: string = location.search): ViewState {
     globe: p.get('globe') === '1',
     layer: (['normal', 'last', 'space'] as const).find((x) => x === p.get('layer')) ?? null,
     terrain: p.get('terrain'),
+    area: readArea(p.get('area')),
   }
 }
 
@@ -40,7 +52,8 @@ export function viewQuery(s: ViewState): string {
   const p = new URLSearchParams()
   if (s.variable) p.set('v', s.variable)
   if (s.variable2) p.set('v2', s.variable2)
-  if (s.point) p.set('pt', s.point.map((x) => x.toFixed(2)).join(','))
+  if (s.area) p.set('area', s.area.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(';'))
+  else if (s.point) p.set('pt', s.point.map((x) => x.toFixed(2)).join(','))
   else if (s.region && s.region !== 'global') p.set('r', s.region)
   if (s.compare) p.set('c', s.compare)
   if (s.from) p.set('from', String(s.from))

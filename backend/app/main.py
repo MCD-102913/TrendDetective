@@ -796,7 +796,14 @@ def _ai_tools(req: AskRequest) -> dict:
     def link_of(a: str, b: str) -> dict:
         r = relation(RelationRequest(variable=a, other=b, **base))
         best = r.get("best") or {}
-        return {"variable_a": a, "variable_b": b, "verdict": r.get("verdict"), "r": best.get("r"), "lag_months": best.get("lag"), "p": best.get("p")}
+        return {
+            "variable_a": a,
+            "variable_b": b,
+            "verdict": r.get("verdict"),
+            "r": best.get("r"),
+            "lag_months": best.get("lag"),
+            "p": best.get("p"),
+        }
 
     def scan_here() -> dict:
         rows = []
@@ -819,7 +826,12 @@ def _ai_tools(req: AskRequest) -> dict:
             "quantity": qn,
             "units": p["units"],
             "levels": [
-                {"hpa": x["level"], "km": x["height_km"], "verdict": x["verdict"], "per_decade": (x.get("rate") or {}).get("per_decade")}
+                {
+                    "hpa": x["level"],
+                    "km": x["height_km"],
+                    "verdict": x["verdict"],
+                    "per_decade": (x.get("rate") or {}).get("per_decade"),
+                }
                 for x in p["levels"]
             ],
         }
@@ -843,8 +855,14 @@ def ai_ask(req: AskRequest, request: Request):
         where = info["name"][lang]
     elif req.point:
         where = f"point {req.point[1]:.2f}, {req.point[0]:.2f}"
+    elif req.polygon:
+        geom = geometry_from_request(req.polygon, None, None)
+        if geom is None or geom.is_empty:
+            raise HTTPException(422, "empty area")
+        w, s_, e, n = geom.bounds
+        where = f"an area drawn by the visitor, longitude {w:.1f} to {e:.1f}, latitude {s_:.1f} to {n:.1f}"
     else:
-        raise HTTPException(422, "region_id or point is required")
+        raise HTTPException(422, "region_id, point or polygon is required")
     if req.terrain and terrain.ok and req.terrain in terrain.types:
         where = f"{where}, only {terrain.label(req.terrain)['en'].lower()}"
     q = {
@@ -853,7 +871,7 @@ def ai_ask(req: AskRequest, request: Request):
         "mode": req.mode,
         "lang": lang,
         "variable": req.variable,
-        "where": [req.region_id, req.point, req.terrain],
+        "where": [req.region_id, req.point, req.terrain, req.polygon],
         "where_name": where,
         "start_year": req.start_year,
     }

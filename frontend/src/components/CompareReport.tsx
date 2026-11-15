@@ -90,9 +90,11 @@ export function CompareReport() {
       setError('no second variable in the link')
       return
     }
-    const target: Target = view.point
-      ? { kind: 'point', point: view.point }
-      : { kind: 'region', region: { region_id: view.region ?? 'global' } as Region, terrain: view.terrain }
+    const target: Target = view.area
+      ? { kind: 'area', polygon: { type: 'Polygon', coordinates: [[...view.area, view.area[0]]] } }
+      : view.point
+        ? { kind: 'point', point: view.point }
+        : { kind: 'region', region: { region_id: view.region ?? 'global' } as Region, terrain: view.terrain }
     api
       .series(va, target, view.from)
       .then(setA)

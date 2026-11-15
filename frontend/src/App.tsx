@@ -50,6 +50,16 @@ const GLOBAL: Region = {
 
 const INITIAL = readView()
 
+// an area drawn on the map: its vertices, closed into a polygon for the API
+const MAX_VERTICES = 40
+const ring = (pts: [number, number][]): GeoJSON.Polygon => ({ type: 'Polygon', coordinates: [[...pts, pts[0]]] })
+const boxOf = (pts: [number, number][]) => [
+  Math.min(...pts.map((p) => p[0])),
+  Math.min(...pts.map((p) => p[1])),
+  Math.max(...pts.map((p) => p[0])),
+  Math.max(...pts.map((p) => p[1])),
+]
+
 // a sensible second variable when compare mode is switched on
 const PAIR: Record<string, string> = {
   precip_gpm: 'gldas_evap',
@@ -102,10 +112,16 @@ export default function App() {
   const [startYear, setStartYear] = useState<number | null>(INITIAL.from)
   const [sigOnly, setSigOnly] = useState(false)
   const [target, setTarget] = useState<Target>(
-    INITIAL.point ? { kind: 'point', point: INITIAL.point } : { kind: 'region', region: GLOBAL, terrain: INITIAL.terrain },
+    INITIAL.area
+      ? { kind: 'area', polygon: ring(INITIAL.area) }
+      : INITIAL.point
+        ? { kind: 'point', point: INITIAL.point }
+        : { kind: 'region', region: GLOBAL, terrain: INITIAL.terrain },
   )
   const [compare, setCompare] = useState<Region | null>(null)
-  const [outline, setOutline] = useState<GeoJSON.Geometry | null>(null)
+  const [outline, setOutline] = useState<GeoJSON.Geometry | null>(INITIAL.area ? ring(INITIAL.area) : null)
+  // vertices of the area being drawn; null when not drawing
+  const [drawing, setDrawing] = useState<[number, number][] | null>(null)
   const [compareOutline, setCompareOutline] = useState<GeoJSON.Geometry | null>(null)
   const [fitTo, setFitTo] = useState<number[] | null>(null)
   const [main, setMain] = useState<Series | null>(null)
@@ -385,10 +401,35 @@ export default function App() {
         .catch(() => setCompareOutline(null))
   }, [])
 
-  const pickPoint = useCallback((lon: number, lat: number) => {
-    setTarget({ kind: 'point', point: [lon, lat] })
-    setOutline(null)
-  }, [])
+  const pickPoint = useCallback(
+    (lon: number, lat: number) => {
+      if (drawing) {
+        if (drawing.length < MAX_VERTICES) setDrawing([...drawing, [lon, lat]])
+        return
+      }
+      setTarget({ kind: 'point', point: [lon, lat] })
+      setOutline(null)
+    },
+    [drawing],
+  )
+
+  const finishArea = useCallback(() => {
+    if (!drawing || drawing.length < 3) return
+    const polygon = ring(drawing)
+    setTarget({ kind: 'area', polygon })
+    setOutline(polygon)
+    setFitTo(boxOf(drawing))
+    setDrawing(null)
+  }, [drawing])
+
+  // the shape grows with every click: a line until the third vertex closes it
+  const draft: GeoJSON.Geometry | null = drawing
+    ? drawing.length >= 3
+      ? ring(drawing)
+      : drawing.length === 2
+        ? { type: 'LineString', coordinates: drawing }
+        : null
+    : null
 
   const openCase = useCallback(
     async (c: Case) => {
@@ -438,6 +479,7 @@ export default function App() {
       variable2: variable2?.id ?? null,
       region: target.kind === 'region' ? target.region.region_id : null,
       point: target.kind === 'point' ? target.point : null,
+      area: target.kind === 'area' ? (target.polygon.coordinates[0].slice(0, -1) as [number, number][]) : null,
       compare: compare?.region_id ?? null,
       from: effectiveStart,
       simple,
@@ -882,6 +924,24 @@ export default function App() {
                 onChange={(terrain) => setTarget((x) => (x.kind === 'region' ? { ...x, terrain } : x))}
               />
             )}
+            {drawing ? (
+              <div className="area-tools">
+                <span className="small">{t('area.hint', { n: drawing.length })}</span>
+                <button type="button" className="btn primary" disabled={drawing.length < 3} onClick={finishArea}>
+                  {t('area.done')}
+                </button>
+                <button type="button" className="btn" disabled={drawing.length === 0} onClick={() => setDrawing(drawing.slice(0, -1))}>
+                  {t('area.undo')}
+                </button>
+                <button type="button" className="btn" onClick={() => setDrawing(null)}>
+                  {t('area.cancel')}
+                </button>
+              </div>
+            ) : (
+              <button type="button" className="btn" onClick={() => setDrawing([])} title={t('area.drawHint')}>
+                {t('area.draw')}
+              </button>
+            )}
             {simple ? (
               <button
                 type="button"
@@ -947,7 +1007,7 @@ export default function App() {
               <MapView
                 overlayUrl={overlayUrl}
                 bounds={meta?.bounds ?? [-180, -85, 180, 85]}
-                outline={outline}
+                outline={draft ?? outline}
                 compareOutline={compareOutline}
                 point={target.kind === 'point' ? target.point : null}
                 fitTo={fitTo}

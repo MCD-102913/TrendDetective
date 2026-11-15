@@ -1891,3 +1891,11 @@ td:has(> .icon) {
   cursor: pointer;
   margin-top: 8px;
 }
+
+/* drawing an area on the map */
+.area-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}

@@ -373,7 +373,10 @@ export type SpaceLayer = {
 }
 
 /** A territory; `terrain` narrows a region to the cells of one terrain type (forests, croplands...). */
-export type Target = { kind: 'region'; region: Region; terrain?: string | null } | { kind: 'point'; point: [number, number] }
+export type Target =
+  | { kind: 'region'; region: Region; terrain?: string | null }
+  | { kind: 'point'; point: [number, number] }
+  | { kind: 'area'; polygon: GeoJSON.Polygon }
 
 export type Profile = {
   quantity: string
@@ -395,7 +398,11 @@ export type Profile = {
 export type TerrainTypes = { year: number | null; types: { id: string; name: L10n; cells: number }[] }
 
 export const where = (target: Target) =>
-  target.kind === 'region' ? { region_id: target.region.region_id, terrain: target.terrain ?? undefined } : { point: target.point }
+  target.kind === 'region'
+    ? { region_id: target.region.region_id, terrain: target.terrain ?? undefined }
+    : target.kind === 'area'
+      ? { polygon: target.polygon }
+      : { point: target.point }
 
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
