@@ -7,6 +7,7 @@ import {
   DropletOff,
   Factory,
   Leaf,
+  Link,
   type LucideIcon,
   Moon,
   MountainSnow,
@@ -35,6 +36,7 @@ const SHAPES = {
   cross: X,
   open: Circle,
   spark: Sparkles,
+  link: Link,
 } satisfies Record<string, LucideIcon>
 
 export type IconName = keyof typeof SHAPES

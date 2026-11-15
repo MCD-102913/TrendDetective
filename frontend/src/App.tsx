@@ -19,6 +19,7 @@ import {
 import { CASES, type Case } from './cases'
 import { AiDetective } from './components/AiDetective'
 import { ComparePanel } from './components/ComparePanel'
+import { CopyLink } from './components/CopyLink'
 import { ChainPanel, FoundPanel } from './components/Found'
 import { Icon } from './components/Icon'
 import { MapView } from './components/MapView'
@@ -700,6 +701,7 @@ export default function App() {
             <button type="button" className="btn" onClick={() => setTourOpen(true)}>
               {t('tour.open')}
             </button>
+            <CopyLink />
             <button type="button" className="btn" onClick={() => setLang(lang === 'ru' ? 'en' : 'ru')} aria-label="Language">
               {lang === 'ru' ? 'EN' : 'RU'}
             </button>

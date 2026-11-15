@@ -1,6 +1,7 @@
 import { type ReactNode, useCallback, useState } from 'react'
 import { useI18n } from '../i18n'
 import { applyTheme, detectTheme, type Theme, ThemeContext, useTheme } from '../theme'
+import { CopyLink } from './CopyLink'
 import { Icon } from './Icon'
 
 export type Page = 'map' | 'forecast' | 'links'
@@ -98,6 +99,7 @@ export function PageShell({
               </button>
             </div>
           )}
+          <CopyLink />
           <button type="button" className="btn" onClick={() => setLang(lang === 'ru' ? 'en' : 'ru')} aria-label="Language">
             {lang === 'ru' ? 'EN' : 'RU'}
           </button>
