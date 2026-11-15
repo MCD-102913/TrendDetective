@@ -1,4 +1,4 @@
-"""Trend Detective API.
+"""TerraScope API.
 
     GET  /api/health
     GET  /api/variables                     catalog: what can be analysed, grouped by sphere
@@ -54,7 +54,7 @@ COUNTRY_HEADER = os.environ.get("TREND_COUNTRY_HEADER", "").strip().lower()
 # the header where a proxy in front of the site puts the visitor's address (for the limits of the SI agent)
 CLIENT_IP_HEADER = os.environ.get("TREND_CLIENT_IP_HEADER", "x-forwarded-for").strip().lower()
 
-app = FastAPI(title="Trend Detective API", version="0.2")
+app = FastAPI(title="TerraScope API", version="0.2")
 _lock = threading.Lock()
 _state: dict = {}
 verifier = verify.Verifier(DATA_DIR)

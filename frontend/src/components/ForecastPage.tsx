@@ -241,7 +241,7 @@ export function ForecastPage() {
   const shown = simple ? terr.slice(0, 1) : terr
 
   useEffect(() => {
-    document.title = 'Trend Detective · forecasts'
+    document.title = 'TerraScope · forecasts'
     api
       .catalog()
       .then(setCatalog)

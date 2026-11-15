@@ -52,7 +52,7 @@ GOALS = {
     "custom": "Test the visitor's own hypothesis with the tools.",
 }
 
-SYSTEM = """You are the trend detective of Trend Detective, a tool that analyses NASA Earth science data (monthly records,
+SYSTEM = """You are the trend detective of TerraScope, a tool that analyses NASA Earth science data (monthly records,
 mostly 1980 to now) for a territory. You help high school and college students find what changes, where, how fast and
 whether it is statistically significant.
 

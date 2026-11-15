@@ -101,7 +101,7 @@ export function LinksPage() {
   const [ruleMsg, setRuleMsg] = useState<string | null>(null)
 
   useEffect(() => {
-    document.title = 'Trend Detective · links'
+    document.title = 'TerraScope · links'
     api
       .catalog()
       .then(setCatalog)

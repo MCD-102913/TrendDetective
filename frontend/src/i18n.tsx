@@ -4,7 +4,7 @@ import type { L10n } from './api'
 export type Lang = 'en' | 'ru'
 
 const EN = {
-  'app.title': 'Trend Detective',
+  'app.title': 'TerraScope',
   'app.tagline': 'What is changing on Earth, where, how fast, and is it real?',
   'theme.toggle': 'Switch theme',
   'pick.title': '1. What is changing?',
@@ -372,7 +372,7 @@ const EN = {
   'report.sources': 'Data',
   'report.sourcesText':
     'NASA MERRA-2 reanalysis (GMAO), GPM IMERG precipitation, CERES SYN1deg and MODIS (Terra), GLDAS Noah land model, AIRS (Aqua), OMI (Aura); MERRA-2, IMERG and CERES via NASA POWER, the rest via NASA Earthdata (LP DAAC, GES DISC). Borders: Natural Earth.',
-  'report.link': 'Open this view in Trend Detective: {url}',
+  'report.link': 'Open this view in TerraScope: {url}',
   'tour.open': 'How to read',
   'tour.next': 'Next',
   'tour.prev': 'Back',
@@ -503,7 +503,7 @@ const EN = {
 }
 
 const RU: typeof EN = {
-  'app.title': 'Trend Detective',
+  'app.title': 'TerraScope',
   'app.tagline': 'Что меняется на Земле, где, как быстро и можно ли этому верить?',
   'theme.toggle': 'Сменить тему',
   'pick.title': '1. Что меняется?',
@@ -870,7 +870,7 @@ const RU: typeof EN = {
   'report.sources': 'Данные',
   'report.sourcesText':
     'Реанализ NASA MERRA-2 (GMAO), осадки GPM IMERG, CERES SYN1deg и MODIS (Terra), модель суши GLDAS Noah, AIRS (Aqua), OMI (Aura); MERRA-2, IMERG и CERES получены через NASA POWER, остальные через NASA Earthdata (LP DAAC, GES DISC). Границы: Natural Earth.',
-  'report.link': 'Открыть этот вид в Trend Detective: {url}',
+  'report.link': 'Открыть этот вид в TerraScope: {url}',
   'tour.open': 'Как читать',
   'tour.next': 'Дальше',
   'tour.prev': 'Назад',

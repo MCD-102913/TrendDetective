@@ -1,6 +1,6 @@
 # References
 
-Sources of the data, the methods and the scientific statements used in Trend Detective. Every method entry names
+Sources of the data, the methods and the scientific statements used in TerraScope. Every method entry names
 the place in the code where it is applied.
 
 ## Data

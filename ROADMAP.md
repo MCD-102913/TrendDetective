@@ -1,6 +1,6 @@
 # Roadmap
 
-A rough plan for Trend Detective during the NASA Space Apps Challenge 2026 (14 and 15 November 2026).
+A rough plan for TerraScope during the NASA Space Apps Challenge 2026 (14 and 15 November 2026).
 Nothing here is final: we will adjust it as we learn what works. Crossed out items are done.
 
 ## Getting started

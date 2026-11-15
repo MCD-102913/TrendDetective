@@ -83,7 +83,7 @@ export function CompareReport() {
 
   useEffect(() => {
     applyTheme('light')
-    document.title = 'Trend Detective · comparison report'
+    document.title = 'TerraScope · comparison report'
     const va = view.variable ?? 't2m'
     const vb = view.variable2
     if (!vb) {
@@ -216,7 +216,7 @@ export function CompareReport() {
           </a>
         </div>
         <header className="report-head">
-          <div className="report-brand">Trend Detective · {t('cmp.reportKind')}</div>
+          <div className="report-brand">TerraScope · {t('cmp.reportKind')}</div>
           <h1>
             {where}: {nameA} {t('report.vs')} {nameB}
           </h1>

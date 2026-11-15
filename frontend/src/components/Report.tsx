@@ -77,7 +77,7 @@ export function Report() {
 
   useEffect(() => {
     applyTheme('light')
-    document.title = 'Trend Detective · report'
+    document.title = 'TerraScope · report'
     const vid = view.variable ?? 't2m'
     api
       .catalog()
@@ -272,7 +272,7 @@ export function Report() {
           </a>
         </div>
         <header className="report-head">
-          <div className="report-brand">Trend Detective · {t('report.kind')}</div>
+          <div className="report-brand">TerraScope · {t('report.kind')}</div>
           <h1>
             {l(main.variable.name)}
             {other ? ` · ${nameOf(main)} ${t('report.vs')} ${nameOf(other)}` : ` · ${nameOf(main)}`}

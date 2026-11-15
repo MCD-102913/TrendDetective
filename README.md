@@ -1,8 +1,8 @@
-# Trend Detective
+# TerraScope
 
 What is changing on Earth, where, how fast, and is it real?
 
-Trend Detective is our project for the NASA Space Apps Challenge 2026, challenge
+TerraScope is our project for the NASA Space Apps Challenge 2026, challenge
 **Be An Earth System Trend Detective**. We are just getting started: this repository will grow during the
 hackathon, and both the scope and the final shape of the tool are still open.
 

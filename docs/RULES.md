@@ -1,6 +1,6 @@
 # Hypotheses: how to write a rule
 
-A rule (a hypothesis) is an expert statement of the form "A drives B, B drives C". Trend Detective checks it on
+A rule (a hypothesis) is an expert statement of the form "A drives B, B drives C". TerraScope checks it on
 NASA data for every country or for the territories you choose and shows where the hypothesis holds, where it does
 not, and where the data say the opposite.
 

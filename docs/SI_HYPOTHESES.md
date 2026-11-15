@@ -2,13 +2,13 @@
 
 The challenge suggests using SI (super intelligence, the term the challenge uses for artificial intelligence) to find which variables may show trends in particular areas, from research papers
 or from the character of a region (a desert, a rainforest, a city). We did this with Claude Science, an SI research
-assistant, working through the public API of Trend Detective on 15 November 2026.
+assistant, working through the public API of TerraScope on 15 November 2026.
 
 The division of work was strict:
 
 * **The SI** chose territory types, found peer-reviewed papers, wrote each hypothesis down before any test (variables,
   territory, expected sign, expected lag, paper DOI) and checked every DOI in Crossref.
-* **Trend Detective** computed every number: trends, links, p-values and verdicts come from our API, the same tests
+* **TerraScope** computed every number: trends, links, p-values and verdicts come from our API, the same tests
   the site uses (`backend/app/trend.py`). The SI did not compute or adjust any statistic.
 
 The team then checked the key numbers again through the API; they match.

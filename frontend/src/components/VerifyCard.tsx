@@ -52,10 +52,7 @@ function VerifyChart({ v }: { v: Verification }) {
         axisLabel: { ...axis.axisLabel, showMaxLabel: false, formatter: (val: number) => String(val) },
       },
       yAxis: { type: 'value', scale: true, ...axis },
-      series: [
-        line(v.tool_name ?? 'NASA', v.series.ref, ink.compare, 3),
-        line('Trend Detective', v.series.ours, ink.annual, 1.2, 'dashed'),
-      ],
+      series: [line(v.tool_name ?? 'NASA', v.series.ref, ink.compare, 3), line('TerraScope', v.series.ours, ink.annual, 1.2, 'dashed')],
     }
   }, [v, theme, num])
   useEffect(() => {

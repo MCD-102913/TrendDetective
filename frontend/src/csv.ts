@@ -10,7 +10,7 @@ const cell = (v: string | number | null | undefined) => {
 function header(s: Series, name: string): string[] {
   const r = s.rate
   const lines = [
-    `# Trend Detective, ${new Date().toISOString().slice(0, 10)}`,
+    `# TerraScope, ${new Date().toISOString().slice(0, 10)}`,
     `# variable: ${s.variable.name.en} (${s.variable.id}), units: ${s.variable.units || 'none'}, source: ${s.variable.source}`,
     `# territory: ${name}, grid cells: ${s.territory.cells_with_data}`,
     `# period: ${s.period.start} to ${s.period.end}`,

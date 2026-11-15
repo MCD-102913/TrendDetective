@@ -1,4 +1,4 @@
-# Hypotheses checked by Trend Detective. Format: docs/RULES.md.
+# Hypotheses checked by TerraScope. Format: docs/RULES.md.
 # Check before sending:  python tools/check_rules.py rules/rules.yaml
 version: 1
 rules:
@@ -9,7 +9,7 @@ rules:
     description:
       en: Haze reflects and absorbs sunlight before it reaches the ground, so the surface gets less energy and daytime highs fall.
       ru: Мгла отражает и поглощает солнечный свет на пути к земле, поверхность получает меньше энергии, и дневные максимумы падают.
-    author: Trend Detective team
+    author: TerraScope team
     links:
       - {from: aod, to: sw_down, sign: "-", max_lag: 1}
       - {from: sw_down, to: t2m_max, sign: "+", max_lag: 1}
