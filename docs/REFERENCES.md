@@ -7,7 +7,7 @@ the place in the code where it is applied.
 
 | Dataset | Version | DOI or address | Used for |
 |---|---|---|---|
-| MERRA-2 reanalysis, monthly single level fields | 5.12.4 | Gelaro et al. 2017 (below); read through the NASA POWER open data store | air temperature, humidity, wind, pressure, ozone column, precipitation, evaporation, soil moisture, snow, sea ice, surface temperature |
+| MERRA-2 reanalysis, monthly single level fields | 5.12.4 | https://doi.org/10.1175/JCLI-D-16-0758.1 (Gelaro et al. 2017); read through the NASA POWER open data store, https://registry.opendata.aws/nasa-power/ | air temperature, humidity, wind, pressure, ozone column, precipitation, evaporation, soil moisture, snow, sea ice, surface temperature |
 | MERRA-2 instM_3d_asm_Np (M2IMNPASM), pressure levels | 5.12.4 | https://doi.org/10.5067/2E096JV59PK7 | air temperature, relative humidity and ozone by height |
 | GPM IMERG Final, monthly | V07 | https://doi.org/10.5067/GPM/IMERG/3B-MONTH/07 (read through NASA POWER) | precipitation |
 | CERES SYN1deg with MODIS clouds | as served by NASA POWER | https://power.larc.nasa.gov/ | clouds, aerosol optical depth, sunlight at the surface, albedo |
