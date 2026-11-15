@@ -1163,9 +1163,10 @@ export default function App() {
               onCsv={() => main && download(fileName(main, 'csv'), seriesCsv(main, nameOf(main), other, other ? nameOf(other) : ''))}
             />
           )}
-          {!variable2 && main && !error && (
+          {main && !error && (
             <AiDetective
               variable={variable}
+              other={variable2}
               variables={catalog?.variables ?? []}
               target={target}
               startYear={effectiveStart}

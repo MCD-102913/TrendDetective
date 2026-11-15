@@ -159,6 +159,7 @@ const dropKey = () => idb('readwrite', (s) => s.delete('gemini'))
 /** The SI detective: a goal for the current territory and variable, not a chat. */
 export function AiDetective({
   variable,
+  other = null,
   variables,
   target,
   startYear,
@@ -166,6 +167,8 @@ export function AiDetective({
   onPickVariable,
 }: {
   variable: Variable | null
+  /** the second variable when the visitor compares two: the question becomes whether they are linked */
+  other?: Variable | null
   variables: Variable[]
   target: Target
   startYear: number | null
@@ -198,6 +201,13 @@ export function AiDetective({
     return () => clearInterval(id)
   }, [busy])
 
+  // comparing two variables: start from the question whether they are linked
+  useEffect(() => {
+    if (!other || !variable) return
+    setGoal('link')
+    setText(`${l(variable.name)} ${lang === 'ru' ? 'и' : 'and'} ${l(other.name)}`.slice(0, MAX_TEXT))
+  }, [other, variable, l, lang])
+
   // a new place or variable makes the old answer stale
   useEffect(() => {
     setAnswer(null)
@@ -225,6 +235,7 @@ export function AiDetective({
           mode: simple ? 'simple' : 'detailed',
           lang: lang === 'ru' ? 'ru' : 'en',
           variable: variable?.id ?? '',
+          other: other?.id ?? '',
           start_year: startYear,
           user_key: key ?? undefined,
           ...where(target),
