@@ -7,6 +7,7 @@
     GET  /api/regions/{id}/geometry         GeoJSON outline
     POST /api/series                        monthly series + trend report for a variable and a territory
     POST /api/profile                       trend by height: one quantity at every pressure level of a territory
+    GET  /api/ai/status, POST /api/ai/ask   the trend detective agent (Gemini; numbers come from our own tests)
     GET  /api/map/meta?variable=            scale, period and significance summary of the trend map
     GET  /api/map.png?variable=             the trend map as a Web-Mercator PNG overlay
     GET  /api/cell?variable=&lat=&lon=      rate and significance of one map cell (hover)
@@ -42,7 +43,7 @@ from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from . import discovery, forecast, gibs, maps, rules as rulebook, terrain as terrain_mod, trend, verify
+from . import ai, discovery, forecast, gibs, maps, rules as rulebook, terrain as terrain_mod, trend, verify
 from .catalog import BY_ID, PROFILES, SOURCES, SPHERES, TWINS, VARIABLES
 from .cube import Cube, Grid
 from .regions import Regions, geometry_from_request
@@ -50,6 +51,8 @@ from .regions import Regions, geometry_from_request
 DATA_DIR = Path(os.environ.get("TREND_DATA_DIR", "data"))
 MAX_GEOMETRY_POINTS = 20000
 COUNTRY_HEADER = os.environ.get("TREND_COUNTRY_HEADER", "").strip().lower()
+# the header where a proxy in front of the site puts the visitor's address (for the limits of the AI agent)
+CLIENT_IP_HEADER = os.environ.get("TREND_CLIENT_IP_HEADER", "x-forwarded-for").strip().lower()
 
 app = FastAPI(title="Trend Detective API", version="0.2")
 _lock = threading.Lock()
@@ -747,6 +750,121 @@ def profile(req: ProfileRequest):
             "levels": rows,
         }
     )
+
+
+class AskRequest(SeriesRequest):
+    variable: str = ""
+    goal: str
+    text: str | None = None
+    mode: str = "detailed"
+    lang: str = "ru"
+    user_key: str | None = None  # the visitor's own Gemini key: used for this request only, never logged or stored
+
+
+_agent: ai.Agent | None = None
+
+
+def agent() -> ai.Agent:
+    global _agent
+    if _agent is None:
+        catalog = variables()["variables"]  # outside the lock: it takes the same lock to open the cube
+        with _lock:
+            if _agent is None:
+                _agent = ai.Agent(DATA_DIR, catalog)
+    return _agent
+
+
+def _ai_tools(req: AskRequest) -> dict:
+    """Our own tests in the compact form the model reads; the territory is always the visitor's."""
+    base = req.model_dump(include={"region_id", "polygon", "bbox", "point", "start_year", "end_year", "terrain"})
+
+    def trend_of(v: str) -> dict:
+        s = series(SeriesRequest(variable=v, **base))
+        rate = s.get("rate") or {}
+        return {
+            "variable": v,
+            "verdict": s["verdict"],
+            "per_decade": rate.get("per_decade"),
+            "ci95": [rate.get("lo"), rate.get("hi")],
+            "units": s["variable"]["units"],
+            "period": [s["period"]["start"], s["period"]["end"]],
+            "robust": bool((s.get("robustness") or {}).get("robust")),
+            "record_years": s["n_years"],
+            "years_needed_to_detect": s.get("years_to_detect"),
+        }
+
+    def link_of(a: str, b: str) -> dict:
+        r = relation(RelationRequest(variable=a, other=b, **base))
+        best = r.get("best") or {}
+        return {"variable_a": a, "variable_b": b, "verdict": r.get("verdict"), "r": best.get("r"), "lag_months": best.get("lag"), "p": best.get("p")}
+
+    def scan_here() -> dict:
+        rows = []
+        for v in VARIABLES:
+            if v["id"] not in cube():
+                continue
+            try:
+                t = trend_of(v["id"])
+            except HTTPException:
+                continue
+            if t["verdict"].startswith("significant") and t["per_decade"] is not None and t["ci95"][0] is not None:
+                width = (t["ci95"][1] - t["ci95"][0]) or 1e-9
+                rows.append({**t, "strength": round(abs(t["per_decade"]) / width, 2)})
+        rows.sort(key=lambda x: -x["strength"])
+        return {"changes": rows[:12], "variables_checked": len(VARIABLES)}
+
+    def profile_of(qn: str) -> dict:
+        p = profile(ProfileRequest(quantity=qn, **base))
+        return {
+            "quantity": qn,
+            "units": p["units"],
+            "levels": [
+                {"hpa": x["level"], "km": x["height_km"], "verdict": x["verdict"], "per_decade": (x.get("rate") or {}).get("per_decade")}
+                for x in p["levels"]
+            ],
+        }
+
+    return {"trend": trend_of, "link": link_of, "scan": scan_here, "profile": profile_of}
+
+
+@app.get("/api/ai/status")
+def ai_status():
+    return agent().status()
+
+
+@app.post("/api/ai/ask")
+def ai_ask(req: AskRequest, request: Request):
+    """The trend detective: a goal, not a chat. Failures come back as a code the site turns into a message."""
+    lang = "ru" if req.lang == "ru" else "en"
+    if req.region_id:
+        info = regions().get(req.region_id)
+        if not info:
+            raise HTTPException(404, "unknown region")
+        where = info["name"][lang]
+    elif req.point:
+        where = f"point {req.point[1]:.2f}, {req.point[0]:.2f}"
+    else:
+        raise HTTPException(422, "region_id or point is required")
+    if req.terrain and terrain.ok and req.terrain in terrain.types:
+        where = f"{where}, only {terrain.label(req.terrain)['en'].lower()}"
+    q = {
+        "goal": req.goal,
+        "text": req.text,
+        "mode": req.mode,
+        "lang": lang,
+        "variable": req.variable,
+        "where": [req.region_id, req.point, req.terrain],
+        "where_name": where,
+        "start_year": req.start_year,
+    }
+    ip = (request.headers.get(CLIENT_IP_HEADER, "") if CLIENT_IP_HEADER else "").split(",")[0].strip()
+    ip = ip or (request.client.host if request.client else "")
+    try:
+        return clean(agent().ask(q, _ai_tools(req), ip, (req.user_key or "").strip() or None))
+    except ai.AiError as e:
+        body = {"code": e.code, "retry_after": e.retry_after}
+        headers = {"Retry-After": str(e.retry_after)} if e.retry_after else None
+        return JSONResponse(body, status_code=e.status, headers=headers)
 
 
 @app.post("/api/series")

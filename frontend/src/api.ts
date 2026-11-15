@@ -394,7 +394,7 @@ export type Profile = {
 
 export type TerrainTypes = { year: number | null; types: { id: string; name: L10n; cells: number }[] }
 
-const where = (target: Target) =>
+export const where = (target: Target) =>
   target.kind === 'region' ? { region_id: target.region.region_id, terrain: target.terrain ?? undefined } : { point: target.point }
 
 async function json<T>(res: Response): Promise<T> {

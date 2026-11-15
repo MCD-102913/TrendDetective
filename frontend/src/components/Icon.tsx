@@ -11,6 +11,7 @@ import {
   Moon,
   MountainSnow,
   Snowflake,
+  Sparkles,
   Sun,
   Thermometer,
   ThermometerSnowflake,
@@ -33,6 +34,7 @@ const SHAPES = {
   check: Check,
   cross: X,
   open: Circle,
+  spark: Sparkles,
 } satisfies Record<string, LucideIcon>
 
 export type IconName = keyof typeof SHAPES

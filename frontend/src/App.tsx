@@ -17,6 +17,7 @@ import {
   type Variable,
 } from './api'
 import { CASES, type Case } from './cases'
+import { AiDetective } from './components/AiDetective'
 import { ComparePanel } from './components/ComparePanel'
 import { ChainPanel, FoundPanel } from './components/Found'
 import { Icon } from './components/Icon'
@@ -1095,6 +1096,16 @@ export default function App() {
               }}
               onReport={openReport}
               onCsv={() => main && download(fileName(main, 'csv'), seriesCsv(main, nameOf(main), other, other ? nameOf(other) : ''))}
+            />
+          )}
+          {!variable2 && main && !error && (
+            <AiDetective
+              variable={variable}
+              variables={catalog?.variables ?? []}
+              target={target}
+              startYear={effectiveStart}
+              simple={simple}
+              onPickVariable={setVariableId}
             />
           )}
         </aside>
