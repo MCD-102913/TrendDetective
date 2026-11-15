@@ -376,7 +376,7 @@ export type SpaceLayer = {
 export type Target =
   | { kind: 'region'; region: Region; terrain?: string | null }
   | { kind: 'point'; point: [number, number] }
-  | { kind: 'area'; polygon: GeoJSON.Polygon }
+  | { kind: 'area'; polygon: GeoJSON.Polygon; terrain?: string | null }
 
 export type Profile = {
   quantity: string
@@ -401,7 +401,7 @@ export const where = (target: Target) =>
   target.kind === 'region'
     ? { region_id: target.region.region_id, terrain: target.terrain ?? undefined }
     : target.kind === 'area'
-      ? { polygon: target.polygon }
+      ? { polygon: target.polygon, terrain: target.terrain ?? undefined }
       : { point: target.point }
 
 async function json<T>(res: Response): Promise<T> {
@@ -430,6 +430,12 @@ export const api = {
   region: (id: string) => fetch(`/api/regions/${id}`).then(json<Region>),
   geometry: (id: string) => fetch(`/api/regions/${id}/geometry`).then(json<GeoJSON.Geometry>),
   terrain: (regionId: string | null) => fetch(`/api/terrain?${q({ region_id: regionId })}`).then(json<TerrainTypes>),
+  terrainArea: (polygon: GeoJSON.Polygon) =>
+    fetch('/api/terrain/area', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ polygon }),
+    }).then(json<TerrainTypes>),
   series: (variable: string, target: Target, startYear: number | null, signal?: AbortSignal) =>
     fetch('/api/series', {
       method: 'POST',

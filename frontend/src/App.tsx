@@ -114,7 +114,7 @@ export default function App() {
   const [sigOnly, setSigOnly] = useState(false)
   const [target, setTarget] = useState<Target>(
     INITIAL.area
-      ? { kind: 'area', polygon: ring(INITIAL.area) }
+      ? { kind: 'area', polygon: ring(INITIAL.area), terrain: INITIAL.terrain }
       : INITIAL.point
         ? { kind: 'point', point: INITIAL.point }
         : { kind: 'region', region: GLOBAL, terrain: INITIAL.terrain },
@@ -486,7 +486,7 @@ export default function App() {
       simple,
       globe,
       layer: layer === 'trend' ? null : layer,
-      terrain: target.kind === 'region' ? (target.terrain ?? null) : null,
+      terrain: target.kind !== 'point' ? (target.terrain ?? null) : null,
     }),
     [variable, variableId, variable2, target, compare, effectiveStart, simple, globe, layer],
   )
@@ -922,11 +922,12 @@ export default function App() {
             {!drawing && target.kind === 'region' && target.region.region_id === 'global' && (
               <p className="start-hint muted small">{t('map.startHint')}</p>
             )}
-            {target.kind === 'region' && (
+            {target.kind !== 'point' && !drawing && (
               <TerrainPicker
-                regionId={target.region.region_id}
+                regionId={target.kind === 'region' ? target.region.region_id : undefined}
+                polygon={target.kind === 'area' ? target.polygon : undefined}
                 value={target.terrain ?? null}
-                onChange={(terrain) => setTarget((x) => (x.kind === 'region' ? { ...x, terrain } : x))}
+                onChange={(terrain) => setTarget((x) => (x.kind === 'point' ? x : { ...x, terrain }))}
               />
             )}
             {drawing ? (

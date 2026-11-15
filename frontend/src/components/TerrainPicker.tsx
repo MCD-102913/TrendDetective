@@ -8,10 +8,13 @@ const MIN_CELLS = 3
 /** Narrows the chosen territory to one terrain type (MODIS land cover): its forests, croplands, deserts... */
 export function TerrainPicker({
   regionId,
+  polygon,
   value,
   onChange,
 }: {
-  regionId: string
+  regionId?: string
+  /** an area drawn on the map, instead of a region */
+  polygon?: GeoJSON.Polygon
   value: string | null
   onChange: (terrain: string | null) => void
 }) {
@@ -19,10 +22,11 @@ export function TerrainPicker({
   const [types, setTypes] = useState<TerrainTypes['types']>([])
   const [year, setYear] = useState<number | null>(null)
 
+  const area = polygon ? JSON.stringify(polygon) : null
   useEffect(() => {
     let live = true
-    api
-      .terrain(regionId === 'global' ? null : regionId)
+    const request = area ? api.terrainArea(JSON.parse(area)) : api.terrain(!regionId || regionId === 'global' ? null : regionId)
+    request
       .then((r) => {
         if (!live) return
         setTypes(r.types.filter((x) => x.cells >= MIN_CELLS))
@@ -32,7 +36,7 @@ export function TerrainPicker({
     return () => {
       live = false
     }
-  }, [regionId])
+  }, [regionId, area])
 
   if (types.length === 0) return null
   return (

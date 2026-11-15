@@ -84,7 +84,7 @@ export function Report() {
       .then((c) => setVariable(c.variables.find((v) => v.id === vid) ?? null))
       .catch(() => {})
     const target: Target = view.area
-      ? { kind: 'area', polygon: { type: 'Polygon', coordinates: [[...view.area, view.area[0]]] } }
+      ? { kind: 'area', polygon: { type: 'Polygon', coordinates: [[...view.area, view.area[0]]] }, terrain: view.terrain }
       : view.point
         ? { kind: 'point', point: view.point }
         : { kind: 'region', region: { region_id: view.region ?? 'global' } as Region, terrain: view.terrain }
