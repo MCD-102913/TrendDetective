@@ -682,7 +682,12 @@ export default function App() {
                     <button
                       type="button"
                       className={`question ${q.variable === variable?.id ? 'active' : ''}`}
-                      onClick={() => setVariableId(q.variable)}
+                      onClick={() => {
+                        setVariableId(q.variable)
+                        // on a phone the answer is below the map: bring it into view
+                        if (matchMedia('(max-width: 760px)').matches)
+                          document.querySelector('.panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      }}
                     >
                       <span className="q-icon" aria-hidden>
                         <Icon name={q.icon} />

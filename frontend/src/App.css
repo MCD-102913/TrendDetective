@@ -1762,3 +1762,53 @@ td:has(> .icon) {
   margin: 6px 0 0;
   color: var(--muted);
 }
+
+/* phones: the search and the legend stand above and below the map instead of covering it */
+@media (max-width: 760px) {
+  .app {
+    grid-template-rows: auto auto auto auto;
+  }
+  .map-area {
+    display: flex;
+    flex-direction: column;
+  }
+  .map-tools {
+    position: static;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  .panes {
+    position: static;
+    flex-direction: column;
+  }
+  .pane .map {
+    position: relative;
+    inset: auto;
+    height: 58vh;
+  }
+  .legend,
+  .map-area.dual .legend {
+    position: static;
+    width: auto;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  .terrain-picker .select {
+    max-width: 100%;
+  }
+  .lk-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .lk-controls > *,
+  .lk-vars > *,
+  .lk-where > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .lk-card {
+    overflow-x: auto;
+  }
+}

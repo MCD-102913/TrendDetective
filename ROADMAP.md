@@ -25,7 +25,7 @@ Nothing here is final: we will adjust it as we learn what works. Crossed out ite
 ## Next
 * ~~A simple mode for people without a background in statistics.~~
 * ~~Separate views for outlooks and for links between several quantities.~~
-* A layout that works on phones and on slower laptops.
+* ~~A layout that works on phones and on slower laptops.~~
 * The presentation and a short demo for the judges.
 * ~~Publishing the interface code in this repository.~~
 

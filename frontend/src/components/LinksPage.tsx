@@ -73,6 +73,19 @@ const zscore = (v: (number | null)[]) => {
 
 const linked = (p: MatrixPair) => p.verdict === 'linked_positive' || p.verdict === 'linked_negative'
 
+// graph labels wrap at spaces so that a long name stays on a narrow screen
+const LABEL_CHARS = 16
+const wrapWords = (text: string, max: number) =>
+  text
+    .split(' ')
+    .reduce<string[]>((lines, word) => {
+      const last = lines[lines.length - 1]
+      if (last !== undefined && `${last} ${word}`.length <= max) lines[lines.length - 1] = `${last} ${word}`
+      else lines.push(word)
+      return lines
+    }, [])
+    .join('\n')
+
 /** "Links": two to five variables on one territory, every pair tested, drawn as a matrix, a graph and charts. */
 export function LinksPage() {
   const { t, l, num } = useI18n()
@@ -177,7 +190,19 @@ export function LinksPage() {
           circular: { rotateLabel: false },
           roam: false,
           edgeSymbol: ['none', 'arrow'],
-          label: { show: true, position: 'bottom', color: ink.primary, fontSize: 12, formatter: (x: { name: string }) => l(name(x.name)) },
+          // room for the names at the sides; a long name wraps instead of running off a narrow screen
+          left: 64,
+          right: 64,
+          top: 24,
+          bottom: 48,
+          label: {
+            show: true,
+            position: 'bottom',
+            color: ink.primary,
+            fontSize: 12,
+            lineHeight: 14,
+            formatter: (x: { name: string }) => wrapWords(l(name(x.name)), LABEL_CHARS),
+          },
           data: data.variables.map((v, i) => ({ name: v.id, symbolSize: 26, itemStyle: { color: SERIES_COLORS[i] } })),
           links: edges,
           lineStyle: { opacity: 0.85 },
