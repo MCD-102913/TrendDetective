@@ -20,7 +20,7 @@ Nothing here is final: we will adjust it as we learn what works. Crossed out ite
 * ~~Satellite imagery next to the numbers, so a trend can be seen as well as measured.~~
 * ~~Regions defined by geography: deserts, mountains, plateaus, seas, large cities.~~
 * ~~Terrain types from MODIS land cover, to look only at the forests, croplands or deserts of a territory.~~
-* The atmosphere by height: temperature, humidity and ozone at pressure levels, and a trend-by-height view.
+* ~~The atmosphere by height: temperature, humidity and ozone at pressure levels, and a trend-by-height view.~~
 
 ## Next
 * ~~A simple mode for people without a background in statistics.~~
