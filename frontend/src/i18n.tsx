@@ -1047,7 +1047,8 @@ function detect(): Lang {
   if (forced === 'ru' || forced === 'en') return forced
   const saved = localStorage.getItem('lang')
   if (saved === 'ru' || saved === 'en') return saved
-  return navigator.language.toLowerCase().startsWith('ru') ? 'ru' : 'en'
+  // English unless the visitor chose otherwise; the browser language does not decide
+  return 'en'
 }
 
 type Ctx = {
