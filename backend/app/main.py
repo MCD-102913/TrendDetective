@@ -8,6 +8,7 @@
     POST /api/series                        monthly series + trend report for a variable and a territory
     POST /api/profile                       trend by height: one quantity at every pressure level of a territory
     GET  /api/ai/status, POST /api/ai/ask   the trend detective agent (Gemini; numbers come from our own tests)
+    GET  /api/terrain, POST /api/terrain/area   terrain types in a territory or in a drawn area
     GET  /api/map/meta?variable=            scale, period and significance summary of the trend map
     GET  /api/map.png?variable=             the trend map as a Web-Mercator PNG overlay
     GET  /api/cell?variable=&lat=&lon=      rate and significance of one map cell (hover)
@@ -256,13 +257,33 @@ def resolve(req, var):
 @app.get("/api/terrain")
 def terrain_types(region_id: str | None = None):
     """Terrain types present in a territory (or on the whole Earth), with the number of 0.5 degree cells of each."""
+    if region_id and not regions().get(region_id):
+        raise HTTPException(404, "unknown region")
+    return _terrain_counts(regions().geometry(region_id) if region_id else None)
+
+
+class AreaRequest(BaseModel):
+    polygon: dict
+
+
+@app.post("/api/terrain/area")
+def terrain_types_area(req: AreaRequest):
+    """Terrain types inside an area drawn by the visitor."""
+    geom = geometry_from_request(req.polygon, None, None)
+    if geom is None or geom.is_empty:
+        raise HTTPException(422, "empty area")
+    if shapely_points(geom) > MAX_GEOMETRY_POINTS:
+        raise HTTPException(422, "geometry is too detailed")
+    return _terrain_counts(geom)
+
+
+def _terrain_counts(geom) -> dict:
+    """Cells of every terrain type inside a geometry (the whole Earth when None)."""
     if not terrain.ok:
         return {"year": None, "types": []}
     grid = Grid(terrain.lat0, terrain.dlat, terrain.nlat, terrain.lon0, terrain.dlon, terrain.nlon)
-    if region_id:
-        if not regions().get(region_id):
-            raise HTTPException(404, "unknown region")
-        ii, jj = grid.cells_in(regions().geometry(region_id))
+    if geom is not None:
+        ii, jj = grid.cells_in(geom)
     else:
         ii, jj = np.indices((grid.nlat, grid.nlon)).reshape(2, -1)
     counts = terrain.counts(grid.lat[ii], grid.lon[jj])
