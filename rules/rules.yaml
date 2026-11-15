@@ -60,3 +60,83 @@ rules:
     links:
       - {from: ts_ocean, to: chl, sign: "-", max_lag: 1}
     territories: [ocean_n_pacific_gyre, ocean_s_pacific_gyre, ocean_n_atlantic_gyre, ocean_s_atlantic_gyre, ocean_indian_gyre, ocean_eq_pacific, ocean_arabian_sea, ocean_bay_of_bengal, ocean_n_atlantic_subpolar, ocean_southern, ocean_mediterranean, ocean_humboldt, ocean_benguela]
+
+  # Hypotheses proposed by Claude Science from the cited papers and tested through the API on two independent
+  # periods (1981 to 2003 and 2004 to 2025; satellite records split in halves), see docs/AI_HYPOTHESES.md.
+  - id: ozone_warms_stratosphere
+    name:
+      en: Less ozone, colder lower stratosphere
+      ru: Меньше озона, холоднее нижняя стратосфера
+    description:
+      en: Ozone absorbs solar ultraviolet light and heats the stratosphere, so ozone loss cools it.
+      ru: Озон поглощает солнечный ультрафиолет и нагревает стратосферу, поэтому потеря озона её охлаждает.
+    author: Claude Science, tested on two periods
+    source: "Randel and Wu 1999, J. Climate, doi:10.1175/1520-0442(1999)012%3C1467:COTAAA%3E2.0.CO;2"
+    links:
+      - {from: o3_50, to: t_50, sign: "+", max_lag: 1}
+    territories: countries
+
+  - id: sea_ice_insulates_air
+    name:
+      en: Less sea ice, warmer air above the sea
+      ru: Меньше морского льда, теплее воздух над морем
+    description:
+      en: Open water releases ocean heat to the air that ice would otherwise block.
+      ru: Открытая вода отдаёт тепло океана воздуху, а лёд это тепло задерживает.
+    author: Claude Science, tested on two periods
+    source: "Screen and Simmonds 2010, Nature, doi:10.1038/nature09051"
+    links:
+      - {from: sea_ice, to: t2m, sign: "-", max_lag: 1}
+    territories: oceans
+
+  - id: warm_water_melts_ice
+    name:
+      en: Warmer sea surface, less sea ice
+      ru: Теплее поверхность моря, меньше льда
+    description:
+      en: Warm Atlantic water flowing into the Barents Sea limits ice formation.
+      ru: Тёплая атлантическая вода, входящая в Баренцево море, мешает образованию льда.
+    author: Claude Science, tested on two periods
+    source: "Smedsrud et al. 2013, Reviews of Geophysics, doi:10.1002/rog.20017"
+    links:
+      - {from: ts_ocean, to: sea_ice, sign: "-", max_lag: 1}
+    territories: oceans
+
+  - id: wind_lifts_dust
+    name:
+      en: Stronger surface wind, more dust in the air
+      ru: Сильнее приземный ветер, больше пыли в воздухе
+    description:
+      en: Dust emission from deserts rises steeply with surface wind speed.
+      ru: Выброс пыли из пустынь резко растёт с приземной скоростью ветра.
+    author: Claude Science, tested on two periods
+    source: "Evan et al. 2016, Nature, doi:10.1038/nature17149"
+    links:
+      - {from: ws10m, to: aod, sign: "+", max_lag: 1}
+    territories: countries
+
+  - id: dry_months_hot_forest
+    name:
+      en: Less rain, hotter months in the rainforest
+      ru: Меньше дождя, жарче месяцы во влажном лесу
+    description:
+      en: Drought months in the Amazon coincide with record warmth.
+      ru: Засушливые месяцы в Амазонии совпадают с рекордной жарой.
+    author: Claude Science, tested on two periods
+    source: "Jimenez-Munoz et al. 2016, Scientific Reports, doi:10.1038/srep33130"
+    links:
+      - {from: precip_merra, to: t2m, sign: "-", max_lag: 1}
+    territories: countries
+
+  - id: dry_soil_hot_days
+    name:
+      en: Drier soil, hotter afternoons
+      ru: Суше почва, жарче днём
+    description:
+      en: Dry soil evaporates less water, so more energy heats the air.
+      ru: Сухая почва испаряет меньше воды, и больше энергии идёт на нагрев воздуха.
+    author: Claude Science, tested on two periods
+    source: "Seneviratne et al. 2010, Earth-Science Reviews, doi:10.1016/j.earscirev.2010.02.004"
+    links:
+      - {from: soil_root, to: t2m_max, sign: "-", max_lag: 1}
+    territories: countries

@@ -132,6 +132,11 @@ Descriptions of the main data sets:
 * Warmer ocean surface, less phytoplankton (a hypothesis in `rules/rules.yaml`): Behrenfeld, M. J., et al. (2006).
   Climate-driven trends in contemporary ocean productivity. Nature, 444, 752-755. https://doi.org/10.1038/nature05317
 
+## Hypotheses from the literature
+
+The papers behind the 19 hypotheses that Claude Science formulated and our API tested are listed with the results in
+`docs/AI_HYPOTHESES.md`.
+
 ## Software
 
 Python: NumPy, SciPy, Shapely, DuckDB, xarray, Zarr, h5py, pyhdf, FastAPI, Pydantic, Uvicorn, Pillow, PyYAML,
