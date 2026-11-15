@@ -53,7 +53,7 @@ const T = {
     err: {
       busy: 'The AI is under heavy load right now, try again in a minute. Your own Gemini key avoids the shared limit.',
       limit_ip: 'You asked several questions in a row. Try again in {min} min.',
-      limit_day: 'The free AI of the site has used up its daily limit. Try tomorrow or use your own Gemini key.',
+      limit_day: 'The AI detective is temporarily unavailable. Try again later or connect your own Gemini key.',
       quota_own: 'The limit of your key is used up, try again later.',
       bad_key: 'The key was not accepted. Check it in Google AI Studio.',
       server_key: 'The AI of the site is unavailable right now. You can use your own Gemini key.',
@@ -100,7 +100,7 @@ const T = {
     err: {
       busy: 'Слишком большая нагрузка на ИИ, попробуйте через минуту. Свой ключ Gemini позволяет обойти общий лимит.',
       limit_ip: 'Вы задали несколько вопросов подряд. Попробуйте через {min} мин.',
-      limit_day: 'Бесплатный ИИ сайта исчерпал дневной лимит. Попробуйте завтра или используйте свой ключ Gemini.',
+      limit_day: 'ИИ-детектив временно недоступен. Попробуйте позже или подключите свой ключ Gemini.',
       quota_own: 'Лимит вашего ключа исчерпан, попробуйте позже.',
       bad_key: 'Ключ не подошёл. Проверьте его в Google AI Studio.',
       server_key: 'ИИ сайта сейчас недоступен. Можно использовать свой ключ Gemini.',
