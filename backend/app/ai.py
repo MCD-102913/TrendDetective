@@ -239,6 +239,9 @@ class Agent:
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.catalog = {v["id"]: v for v in catalog}
         self.site_key = os.environ.get("GEMINI_API_KEY", "")
+        # questions being answered right now: a repeat waits for the cache instead of spending the quota again
+        self._inflight: set[str] = set()
+        self._inflight_lock = threading.Lock()
 
     def status(self) -> dict:
         return {
@@ -272,6 +275,19 @@ class Agent:
         cache = self.cache_dir / (hashlib.sha256((MODEL + ident).encode()).hexdigest()[:24] + ".json")
         if cache.exists() and time.time() - cache.stat().st_mtime < CACHE_TTL_S:
             return {**json.loads(cache.read_text()), "cached": True}
+        with self._inflight_lock:
+            if cache.name in self._inflight:
+                raise AiError("in_progress", 409, 10)
+            self._inflight.add(cache.name)
+        try:
+            return self._answer(q, goal, text, tools, ip, own, key, cache)
+        finally:
+            with self._inflight_lock:
+                self._inflight.discard(cache.name)
+
+    def _answer(
+        self, q: dict, goal: str, text: str, tools: dict[str, Callable], ip: str, own: bool, key: str, cache: Path
+    ) -> dict:
         self.budget.admit(ip, own)
         slot = self.budget.slot(own)
         if not slot.acquire(timeout=1):

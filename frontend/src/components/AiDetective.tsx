@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { type Target, type Variable, where } from '../api'
 import { useI18n } from '../i18n'
 import { Icon, Mark } from './Icon'
@@ -38,7 +38,15 @@ const T = {
       custom: 'Your hypothesis, for example: the soil dries because it rains less',
     },
     ask: 'Ask',
-    working: 'The SI is checking the data, usually 20 to 40 seconds…',
+    asking: 'Checking…',
+    stage: {
+      read: 'Reading the question…',
+      data: 'Checking NASA data with our tests…',
+      write: 'Writing the answer…',
+      fallback: 'The main model is busy, trying the backup one…',
+    },
+    elapsed: '{n} s',
+    noRepeat: 'The request is on its way, no need to press again.',
     openVar: 'Open',
     next: 'Ask next',
     footer: 'Model {model}. Numbers come from our tests, not from the model; the wording may still be imperfect.',
@@ -63,6 +71,7 @@ const T = {
       blocked: 'The model refused to answer this request.',
       off_topic: 'The SI detective only answers questions about trends in the data of this site. Rephrase the question.',
       need_text: 'Describe what exactly to check.',
+      in_progress: 'This question is already being answered, the result will appear in a few seconds.',
       other: 'Something went wrong, try again.',
     },
   },
@@ -85,7 +94,15 @@ const T = {
       custom: 'Ваша гипотеза, например: почва сохнет, потому что дождей меньше',
     },
     ask: 'Спросить',
-    working: 'SI проверяет данные, обычно от 20 до 40 секунд…',
+    asking: 'Проверяю…',
+    stage: {
+      read: 'Читаю вопрос…',
+      data: 'Проверяю данные NASA нашими тестами…',
+      write: 'Пишу ответ…',
+      fallback: 'Основная модель занята, пробую запасную…',
+    },
+    elapsed: '{n} с',
+    noRepeat: 'Запрос уже отправлен, нажимать ещё раз не нужно.',
     openVar: 'Открыть',
     next: 'Спросить дальше',
     footer: 'Модель {model}. Числа посчитаны нашими тестами, а не моделью; формулировки могут быть неточными.',
@@ -110,6 +127,7 @@ const T = {
       blocked: 'Модель отказалась отвечать на этот запрос.',
       off_topic: 'SI-детектив отвечает только на вопросы о трендах в данных этого сайта. Переформулируйте вопрос.',
       need_text: 'Опишите, что именно проверить.',
+      in_progress: 'Этот вопрос уже обрабатывается, ответ появится через несколько секунд.',
       other: 'Что-то пошло не так, попробуйте ещё раз.',
     },
   },
@@ -160,6 +178,9 @@ export function AiDetective({
   const [goal, setGoal] = useState<Goal>('what_changes')
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
+  // set before the first render of the waiting state, so a fast double click cannot send twice
+  const inFlight = useRef(false)
+  const [elapsed, setElapsed] = useState(0)
   const [answer, setAnswer] = useState<Answer | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [key, setKey] = useState<string | null>(null)
@@ -169,6 +190,13 @@ export function AiDetective({
   useEffect(() => {
     readKey().then((k) => setKey(k || null))
   }, [])
+
+  useEffect(() => {
+    if (!busy) return
+    setElapsed(0)
+    const id = setInterval(() => setElapsed((n) => n + 1), 1000)
+    return () => clearInterval(id)
+  }, [busy])
 
   // a new place or variable makes the old answer stale
   useEffect(() => {
@@ -182,6 +210,8 @@ export function AiDetective({
   }
 
   const ask = async (g: Goal = goal, q: string = text) => {
+    if (inFlight.current) return
+    inFlight.current = true
     setBusy(true)
     setError(null)
     setAnswer(null)
@@ -211,6 +241,7 @@ export function AiDetective({
     } catch {
       setError(s.err.other)
     } finally {
+      inFlight.current = false
       setBusy(false)
     }
   }
@@ -262,11 +293,28 @@ export function AiDetective({
         <span className="muted small">
           {text.length}/{MAX_TEXT}
         </span>
-        <button type="button" className="btn primary" disabled={busy || (needsText && text.trim().length < 3)} onClick={() => ask()}>
-          {s.ask}
+        <button
+          type="button"
+          className="btn primary ai-ask"
+          disabled={busy || (needsText && text.trim().length < 3)}
+          aria-busy={busy}
+          onClick={() => ask()}
+        >
+          {busy && <span className="ai-spinner" aria-hidden />}
+          {busy ? s.asking : s.ask}
         </button>
       </div>
-      {busy && <p className="muted small">{s.working}</p>}
+      {busy && (
+        <output className="ai-loading" aria-live="polite">
+          <span className="ai-spinner big" aria-hidden />
+          <div>
+            <div>{elapsed < 4 ? s.stage.read : elapsed < 12 ? s.stage.data : elapsed < 25 ? s.stage.write : s.stage.fallback}</div>
+            <div className="muted small">
+              {s.elapsed.replace('{n}', String(elapsed))} · {s.noRepeat}
+            </div>
+          </div>
+        </output>
+      )}
       {error && <p className="error small">{error}</p>}
       {answer && (
         <div className="ai-answer">
@@ -301,6 +349,7 @@ export function AiDetective({
                   type="button"
                   key={n}
                   className="btn small-btn"
+                  disabled={busy}
                   onClick={() => {
                     setGoal('custom')
                     setText(n.slice(0, MAX_TEXT))
