@@ -394,6 +394,15 @@ export function LinksPage() {
           )}
         </div>
       </div>
+      <details className="lk-help">
+        <summary>{t('lk.help.title')}</summary>
+        <ul>
+          <li>{t('lk.help.matrix')}</li>
+          <li>{t('lk.help.mark')}</li>
+          <li>{t('lk.help.graph')}</li>
+          <li>{t('lk.help.chart')}</li>
+        </ul>
+      </details>
       {error && <p className="error">{t('err.load', { msg: error })}</p>}
       {busy && !data && <p className="muted">{t('lk.loading')}</p>}
       {data && (

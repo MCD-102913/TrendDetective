@@ -238,6 +238,14 @@ const EN = {
   'area.done': 'Done',
   'area.undo': 'Remove last',
   'area.cancel': 'Cancel',
+  'lk.help.title': 'How to read this page',
+  'lk.help.matrix':
+    'Each cell compares two quantities on the chosen territory: do their ups and downs from year to year go together? The season and the long-term trend are removed first, so two things that merely both grow do not count as linked.',
+  'lk.help.mark':
+    'A check mark means the link is statistically proven. The number is the correlation: close to +1 they rise and fall together, close to -1 one rises when the other falls, near 0 there is no link. A lag in months means one follows the other with a delay.',
+  'lk.help.graph':
+    'The graph keeps only proven links. An arrow points from the quantity that changes first to the one that follows; a link does not prove which one is the cause.',
+  'lk.help.chart': 'The chart below puts all chosen quantities on one scale, year by year, so you can see the shared swings yourself.',
   'map.startHint': 'Start here: find a country, a region, a desert or a city, click a point on the map, or draw your own area.',
   'link.copy': 'Copy link',
   'link.copied': 'Copied',
@@ -740,6 +748,14 @@ const RU: typeof EN = {
   'area.done': 'Готово',
   'area.undo': 'Убрать точку',
   'area.cancel': 'Отмена',
+  'lk.help.title': 'Как читать эту страницу',
+  'lk.help.matrix':
+    'Каждая клетка сравнивает два показателя на выбранной территории: совпадают ли их колебания от года к году? Сначала убираются сезон и долгий тренд, поэтому два показателя, которые просто оба растут, связанными не считаются.',
+  'lk.help.mark':
+    'Галочка значит, что связь статистически доказана. Число показывает корреляцию: около +1 показатели растут и падают вместе, около -1 один растёт, когда другой падает, около 0 связи нет. Задержка в месяцах значит, что один следует за другим с опозданием.',
+  'lk.help.graph':
+    'На графе остаются только доказанные связи. Стрелка идёт от показателя, который меняется первым, к тому, что следует за ним; связь не доказывает, что из них причина.',
+  'lk.help.chart': 'График ниже показывает все выбранные показатели в одном масштабе по годам, чтобы общие колебания было видно глазами.',
   'map.startHint': 'С чего начать: найдите страну, регион, пустыню или город, кликните точку на карте или выделите свою область.',
   'link.copy': 'Скопировать ссылку',
   'link.copied': 'Скопировано',
