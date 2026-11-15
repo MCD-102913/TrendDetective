@@ -116,6 +116,8 @@ Descriptions of the main data sets:
 ### Territories (`backend/app/regions.py`, `backend/app/terrain.py`)
 
 * Territory averages weight each grid cell by its area (sine of the latitude bounds).
+* A territory is the set of grid cells whose centres fall inside it; an area drawn by the visitor is a polygon
+  treated the same way, and a territory smaller than a cell takes the nearest cell.
 * Terrain types: the IGBP classes of MCD12C1 grouped into ten types; a 0.5 degree cell gets a type that covers at
   least half of it (a quarter for cities).
 
@@ -140,5 +142,5 @@ The papers behind the 19 hypotheses that Claude Science formulated and our API t
 ## Software
 
 Python: NumPy, SciPy, Shapely, DuckDB, xarray, Zarr, h5py, pyhdf, FastAPI, Pydantic, Uvicorn, Pillow, PyYAML,
-pycountry. Browser: React, TypeScript, Vite, MapLibre GL, ECharts. Versions are in `requirements.txt`,
+pycountry. Browser: React, TypeScript, Vite, MapLibre GL, ECharts, Lucide icons. Versions are in `requirements.txt`,
 `frontend/package.json` and the README.

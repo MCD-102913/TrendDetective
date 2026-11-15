@@ -21,6 +21,9 @@ Nothing here is final: we will adjust it as we learn what works. Crossed out ite
 * ~~Regions defined by geography: deserts, mountains, plateaus, seas, large cities.~~
 * ~~Terrain types from MODIS land cover, to look only at the forests, croplands or deserts of a territory.~~
 * ~~The atmosphere by height: temperature, humidity and ozone at pressure levels, and a trend-by-height view.~~
+* ~~An area drawn on the map as a territory of its own.~~
+* ~~An SI detective that chooses which of our tests to run for a visitor's question.~~
+* ~~Hypotheses from the literature, formulated by SI and tested on two independent periods.~~
 
 ## Next
 * ~~A simple mode for people without a background in statistics.~~

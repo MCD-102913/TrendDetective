@@ -3,8 +3,7 @@
 What is changing on Earth, where, how fast, and is it real?
 
 TerraScope is our project for the NASA Space Apps Challenge 2026, challenge
-**Be An Earth System Trend Detective**. We are just getting started: this repository will grow during the
-hackathon, and both the scope and the final shape of the tool are still open.
+**Be An Earth System Trend Detective**. It was built during the hackathon on 14 and 15 November 2026.
 
 ## The idea
 
@@ -19,20 +18,26 @@ to make it easy for anyone to pick a quantity and a place and get an honest answ
 We care most about the last word of our tagline: every number shown should come with the test behind it, and
 the tests themselves should be checked.
 
-## What we are exploring
+## What it does
 
-These are directions we are working on; what ends up in the final version is not decided yet.
-
-* Time series of a territory with the season removed, and the rate of change with its uncertainty.
-* Significance tests that hold up against autocorrelation, and checks of whether a trend is robust.
-* Maps of where the change is significant.
-* Links between quantities that go beyond simply sharing a trend.
-* Careful, tested continuation of trends a few years ahead.
-* A simple way to look at all of this for people who are not scientists.
+* 50 NASA quantities, from 1980 where the record allows, for a country, a region, a desert, a mountain range, a
+  sea, a large city, a latitude belt, a point or an area drawn on the map; any territory can be narrowed to one
+  terrain type (its forests, croplands, deserts or cities).
+* The rate of change with its 95% interval, a t test corrected for autocorrelation, the Mann-Kendall test and
+  checks of robustness; when a trend is not proven, how many years of data it would need.
+* Maps of where the change is significant, with the false discovery rate controlled over all cells.
+* The atmosphere by height: temperature, humidity and ozone from 850 to 10 hPa and the trend at every level.
+* Links between quantities beyond a shared trend, hypotheses written by experts or visitors, and an exhaustive
+  search of links confirmed on years the search did not see.
+* "If the trend continues": outlooks shown only where a check on past data says they can be trusted.
+* A check of our numbers against NASA Giovanni and the POWER API (`docs/VERIFICATION.md`).
+* An SI detective that chooses which of these tests to run for a question, and 19 hypotheses from the
+  literature tested on two independent periods (`docs/SI_HYPOTHESES.md`).
+* A simple mode with everyday questions, in English and Russian, on desktop and phone.
 
 ## Data we use
 
-Monthly global records, regridded to a common grid of 0.5 to 1 degree.
+Monthly global records on grids of 0.5 to 1 degree (about 50 to 110 km).
 
 | Dataset | Archive or service | Quantities |
 |---|---|---|
@@ -67,9 +72,6 @@ Monthly global records, regridded to a common grid of 0.5 to 1 degree.
 
 ## Stack
 
-We have settled on the main stack. The list of dependencies is not final yet and may still change as the
-project grows.
-
 **Server** (Python 3.14)
 
 | Purpose | Packages (versions we use now) |
@@ -92,6 +94,7 @@ Storage: monthly data as NumPy memory mapped arrays; precomputed results in SQLi
 | Build | Vite 8 |
 | Map and globe | MapLibre GL 6.16 |
 | Charts | ECharts 6 |
+| Icons | Lucide |
 
 The server dependencies are listed in `requirements.txt`, the browser ones in `frontend/package.json`.
 Still open: how the project will be packaged for others to run.
@@ -102,19 +105,18 @@ Still open: how the project will be packaged for others to run.
 |---|---|
 | `backend/` | API and statistics |
 | `etl/` | loaders that fetch NASA data |
-| `tools/` | batch jobs: the check of trend outlooks on past data, the outlooks by country, the exhaustive search of links |
+| `tools/` | batch jobs: the check of trend outlooks on past data, the outlooks by country, the exhaustive search of links, the named regions and the terrain map |
 | `rules/` | hypotheses checked against the data, in YAML |
 | `tests/` | tests of the statistics on synthetic series |
 | `frontend/` | web interface: the map and globe, outlooks, links between quantities, a simple mode |
-| `docs/` | how to write a hypothesis (`docs/RULES.md`), the check against NASA tools (`docs/VERIFICATION.md`) |
-
-Parts of the code are being added step by step.
+| `docs/` | how to write a hypothesis (`docs/RULES.md`), the check against NASA tools (`docs/VERIFICATION.md`), hypotheses from the literature (`docs/SI_HYPOTHESES.md`), sources (`docs/REFERENCES.md`) |
 
 ## Running locally
 
 The API reads a monthly data cube that the loaders in `etl/` build from the NASA archives. Some archives need
 an Earthdata token, read from `EARTHDATA_TOKEN` in the environment or in a `.env` file in the project root.
-The full cube takes a long time to download and about 13 GB of disk.
+The full cube takes a long time to download and about 18 GB of disk. The named regions and the terrain map are
+built once with `tools/build_places.py` and `tools/build_terrain.py`.
 
 ```
 python -m venv .venv
@@ -136,12 +138,13 @@ Tests: `pytest tests`.
 
 ## Status
 
-Work in progress during the hackathon, November 2026. See `ROADMAP.md`.
+Submitted to the NASA Space Apps Challenge 2026 on 15 November 2026. What comes next is in `ROADMAP.md`.
 
 ## Credits
 
-Data: NASA (MERRA-2, GPM IMERG, CERES, MODIS, GLDAS, AIRS, OMI, NASA POWER, NASA GIBS, Earthdata taken from GES DISC: https://disc.gsfc.nasa.gov/datasets/) and
-Natural Earth. Built for the NASA Space Apps Challenge 2026.
+Data: NASA (MERRA-2, GPM IMERG, CERES, MODIS, GLDAS, AIRS, OMI, NASA POWER, NASA GIBS; GES DISC archives:
+https://disc.gsfc.nasa.gov/datasets/) and Natural Earth. Icons: Lucide (ISC license). Sources of every method are
+in `docs/REFERENCES.md`. Built for the NASA Space Apps Challenge 2026.
 
 ## License
 
