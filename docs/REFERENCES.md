@@ -48,7 +48,7 @@ Descriptions of the main data sets:
 | NASA Harmony with the Giovanni averaging service | https://harmony.earthdata.nasa.gov/, https://giovanni.gsfc.nasa.gov/giovanni/ | area averages computed by NASA, to verify ours (`docs/VERIFICATION.md`) |
 | NASA GIBS | https://nasa-gibs.github.io/gibs-api-docs/ | recent satellite imagery on the map |
 | NASA Worldview | https://worldview.earthdata.nasa.gov/ | links from the map to the same imagery |
-| Google Gemini API, model gemini-4-hydrogen | https://aistudio.google.com/ | the SI detective: chooses which of our tests to run for a question (`backend/app/ai.py`); the numbers come from our tests |
+| Google Gemini API, models gemini-3.8-flash and gemini-2.5-flash (fallback) | https://aistudio.google.com/ | the SI detective: chooses which of our tests to run for a question (`backend/app/ai.py`); the numbers come from our tests |
 
 ## Methods
 

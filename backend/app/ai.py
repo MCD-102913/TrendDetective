@@ -26,9 +26,12 @@ from pathlib import Path
 
 import requests
 
-MODEL = os.environ.get("AI_MODEL", "gemini-4-hydrogen")
+MODEL = os.environ.get("AI_MODEL", "gemini-3.8-flash")
+# when the main model is overloaded or silent, the same question starts again on a steadier one
+FALLBACK_MODEL = os.environ.get("AI_FALLBACK_MODEL", "gemini-2.5-flash")
+FALLBACK_ON = {"timeout", "model_unavailable", "busy", "quota_own"}
 ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-TIMEOUT_S = 60
+TIMEOUT_S = 25  # per call: past this the fallback model gets the question
 MAX_TEXT = 200
 MAX_TOOL_ROUNDS = 3
 MAX_TOOL_CALLS = 6
@@ -121,8 +124,11 @@ ANSWER_SCHEMA = {
                 "type": "object",
                 "properties": {
                     "kind": {"type": "string", "enum": ["trend", "link", "profile"]},
-                    "variable": {"type": "string"},
-                    "other": {"type": "string"},
+                    "variable": {
+                        "type": "string",
+                        "description": "catalog id, for example t_200 or ndvi; for a profile: t, rh or o3",
+                    },
+                    "other": {"type": "string", "description": "catalog id of the second variable of a link"},
                     "note": {"type": "string"},
                 },
                 "required": ["kind", "variable", "note"],
@@ -186,10 +192,10 @@ class Budget:
         return self._slots["own" if own_key else "site"]
 
 
-def _gemini(key: str, body: dict, own_key: bool) -> dict:
+def _gemini(key: str, body: dict, own_key: bool, model: str) -> dict:
     try:
         r = requests.post(
-            ENDPOINT.format(model=MODEL),
+            ENDPOINT.format(model=model),
             headers={"x-goog-api-key": key, "Content-Type": "application/json"},
             json=body,
             timeout=TIMEOUT_S,
@@ -235,10 +241,18 @@ class Agent:
         self.site_key = os.environ.get("GEMINI_API_KEY", "")
 
     def status(self) -> dict:
-        return {"model": MODEL, "site_key": bool(self.site_key), "remaining_today": self.budget.remaining_today()}
+        return {
+            "model": MODEL,
+            "fallback_model": FALLBACK_MODEL,
+            "site_key": bool(self.site_key),
+            "remaining_today": self.budget.remaining_today(),
+        }
 
     def _catalog_text(self) -> str:
-        return "\n".join(f"{v['id']}: {v['name']['en']}, {v['units']}, {v['source']}, {v['start'][:4]}" for v in self.catalog.values())
+        return "\n".join(
+            f"{v['id']}: {v['name']['en']}, {v['units']}, {v['source']}, {v['start'][:4]}"
+            for v in self.catalog.values()
+        )
 
     def ask(self, q: dict, tools: dict[str, Callable], ip: str, user_key: str | None) -> dict:
         goal, text = q["goal"], _clip(q.get("text"), MAX_TEXT)
@@ -252,7 +266,9 @@ class Agent:
         key = user_key or self.site_key
         if not key:
             raise AiError("no_key", 503)
-        ident = json.dumps({k: q.get(k) for k in ("goal", "text", "mode", "lang", "variable", "where", "start_year")}, sort_keys=True)
+        ident = json.dumps(
+            {k: q.get(k) for k in ("goal", "text", "mode", "lang", "variable", "where", "start_year")}, sort_keys=True
+        )
         cache = self.cache_dir / (hashlib.sha256((MODEL + ident).encode()).hexdigest()[:24] + ".json")
         if cache.exists() and time.time() - cache.stat().st_mtime < CACHE_TTL_S:
             return {**json.loads(cache.read_text()), "cached": True}
@@ -261,14 +277,21 @@ class Agent:
         if not slot.acquire(timeout=1):
             raise AiError("busy", 429, 30)
         try:
-            out = self._run(q, goal, text, tools, key, own)
+            out = None
+            for model in (MODEL, FALLBACK_MODEL):
+                try:
+                    out = self._run(q, goal, text, tools, key, own, model)
+                    break
+                except AiError as e:
+                    if model == FALLBACK_MODEL or e.code not in FALLBACK_ON:
+                        raise
         finally:
             slot.release()
         if out["status"] == "ok":
             cache.write_text(json.dumps(out))
         return out
 
-    def _run(self, q: dict, goal: str, text: str, tools: dict[str, Callable], key: str, own: bool) -> dict:
+    def _run(self, q: dict, goal: str, text: str, tools: dict[str, Callable], key: str, own: bool, model: str) -> dict:
         lang = "Russian" if q.get("lang") == "ru" else "English"
         mode = "simple" if q.get("mode") == "simple" else "detailed"
         system = SYSTEM.format(calls=MAX_TOOL_CALLS, lang=lang, style=STYLE[mode], catalog=self._catalog_text())
@@ -276,14 +299,24 @@ class Agent:
         task = (
             f"Territory: {q['where_name']}.\n"
             f"Current variable: {cur['id'] + ' (' + cur['name']['en'] + ')' if cur else 'none'}.\n"
-            f"Goal: {GOALS[goal]}\n" + (f"The visitor writes: \"{text}\"\n" if text else "")
+            f"Goal: {GOALS[goal]}\n" + (f'The visitor writes: "{text}"\n' if text else "")
         )
         contents: list[dict] = [{"role": "user", "parts": [{"text": task}]}]
         evidence: dict[tuple, dict] = {}
         calls = 0
         gen = {"maxOutputTokens": MAX_OUTPUT_TOKENS, "thinkingConfig": {"thinkingBudget": THINKING_BUDGET}}
         for _ in range(MAX_TOOL_ROUNDS):
-            d = _gemini(key, {"systemInstruction": {"parts": [{"text": system}]}, "contents": contents, "tools": [{"functionDeclarations": TOOLS}], "generationConfig": gen}, own)
+            d = _gemini(
+                key,
+                {
+                    "systemInstruction": {"parts": [{"text": system}]},
+                    "contents": contents,
+                    "tools": [{"functionDeclarations": TOOLS}],
+                    "generationConfig": gen,
+                },
+                own,
+                model,
+            )
             if not own:
                 self.budget.spend()
             parts, _ = _parts(d)
@@ -295,7 +328,11 @@ class Agent:
             for fc in fcalls:
                 calls += 1
                 name, args = fc.get("name"), fc.get("args") or {}
-                result = self._tool(name, args, tools, evidence) if calls <= MAX_TOOL_CALLS else {"error": "tool call limit reached"}
+                result = (
+                    self._tool(name, args, tools, evidence)
+                    if calls <= MAX_TOOL_CALLS
+                    else {"error": "tool call limit reached"}
+                )
                 resp = {"name": name, "response": {"result": result}}
                 if fc.get("id"):
                     resp["id"] = fc["id"]
@@ -304,16 +341,21 @@ class Agent:
             if calls >= MAX_TOOL_CALLS:
                 break
         contents.append({"role": "user", "parts": [{"text": "Now give the final answer in the required JSON form."}]})
-        final = {**gen, "maxOutputTokens": MAX_ANSWER_TOKENS, "responseMimeType": "application/json", "responseSchema": ANSWER_SCHEMA}
+        final = {
+            **gen,
+            "maxOutputTokens": MAX_ANSWER_TOKENS,
+            "responseMimeType": "application/json",
+            "responseSchema": ANSWER_SCHEMA,
+        }
         body = {"systemInstruction": {"parts": [{"text": system}]}, "contents": contents, "generationConfig": final}
         for attempt in range(2):  # a broken JSON answer gets one more try, not more
-            d = _gemini(key, body, own)
+            d = _gemini(key, body, own, model)
             if not own:
                 self.budget.spend()
             parts, _ = _parts(d)
             raw = "".join(p.get("text", "") for p in parts if not p.get("thought"))
             try:
-                return self._checked(json.loads(raw), evidence, mode)
+                return {**self._checked(json.loads(raw), evidence, mode), "model": model}
             except ValueError:
                 if attempt:
                     raise AiError("model_error", 502) from None
@@ -349,6 +391,17 @@ class Agent:
             return {"error": _clip(getattr(e, "detail", None) or e, 160)}
         return {"error": f"unknown tool {name}"}
 
+    def _id(self, name: object) -> str:
+        """A catalog id; a model that writes the variable's name instead gets it mapped back to the id."""
+        s = str(name or "").strip()
+        if not s or s in self.catalog or s in ("t", "rh", "o3"):
+            return s
+        low = s.lower()
+        for vid, v in self.catalog.items():
+            if low in (v["name"]["en"].lower(), v["name"]["ru"].lower()):
+                return vid
+        return s
+
     def _checked(self, ans: dict, evidence: dict, mode: str) -> dict:
         status = ans.get("status") if ans.get("status") in ("ok", "off_topic", "no_data") else "ok"
         if status == "off_topic":
@@ -356,7 +409,7 @@ class Agent:
         limit = 500 if mode == "simple" else 1100
         findings = []
         for f in ans.get("findings") or []:
-            kind, v, o = f.get("kind"), str(f.get("variable", "")), str(f.get("other", "") or "")
+            kind, v, o = f.get("kind"), self._id(f.get("variable")), self._id(f.get("other"))
             if kind == "trend" and ("trend", v) in evidence:
                 ev = evidence[("trend", v)]
             elif kind == "link" and ("link", v, o) in evidence:
@@ -365,7 +418,9 @@ class Agent:
                 ev = evidence[("profile", v)]
             else:
                 continue  # nothing our tools computed backs it
-            findings.append({"kind": kind, "variable": v, "other": o or None, "note": _clip(f.get("note"), 240), "evidence": ev})
+            findings.append(
+                {"kind": kind, "variable": v, "other": o or None, "note": _clip(f.get("note"), 240), "evidence": ev}
+            )
         return {
             "status": status,
             "headline": _clip(ans.get("headline"), 140),
