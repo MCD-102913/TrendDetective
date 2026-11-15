@@ -919,6 +919,9 @@ export default function App() {
           <div className="map-tools">
             <h2 className="step">{t('map.title')}</h2>
             <RegionSearch placeholder={t('map.search')} onPick={pickRegion} />
+            {!drawing && target.kind === 'region' && target.region.region_id === 'global' && (
+              <p className="start-hint muted small">{t('map.startHint')}</p>
+            )}
             {target.kind === 'region' && (
               <TerrainPicker
                 regionId={target.region.region_id}

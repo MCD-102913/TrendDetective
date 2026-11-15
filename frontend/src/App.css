@@ -1950,3 +1950,9 @@ td:has(> .icon) {
     animation: ai-pulse 1.6s ease-in-out infinite;
   }
 }
+
+/* the first hint while the whole Earth is shown */
+.start-hint {
+  flex-basis: 100%;
+  margin: 0;
+}
