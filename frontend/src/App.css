@@ -1757,3 +1757,8 @@ td:has(> .icon) {
 .profile-card h3 {
   margin-bottom: 4px;
 }
+
+.detect {
+  margin: 6px 0 0;
+  color: var(--muted);
+}

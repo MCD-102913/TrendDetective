@@ -3,6 +3,7 @@ import { useI18n } from '../i18n'
 import { questionFor } from '../questions'
 import { OutlookNote } from './Outlook'
 import { TrendChart } from './TrendChart'
+import { LongerRecord } from './TrendPanel'
 
 type Light = 'green' | 'yellow' | 'grey'
 
@@ -103,6 +104,7 @@ export function SimplePanel({
           </div>
         )}
         <p className="small simple-trust">{trust}</p>
+        <LongerRecord s={s} />
       </div>
       <TrendChart main={s} other={null} mainName={name} otherName="" simple />
       <OutlookNote s={s} />

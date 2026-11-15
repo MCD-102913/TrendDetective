@@ -54,6 +54,10 @@ const EN = {
     'Looks like a step, not a steady trend: the level shifted by {v} around {year}. Check for a real event or a change in the observing system.',
   'cp.none': 'No abrupt step found: the change is gradual.',
   'detect.need': 'With this noise a trend of this size needs about {n} years of data to stand out; the record has {have}.',
+  'detect.longer':
+    'Not proven yet. With this year-to-year noise a change of this size needs about {n} years of data to stand out; the record has {have}. Sometimes all a trend needs is a longer record.',
+  'detect.century':
+    'Not proven yet. A change this small would need more than a century of data to stand out of the year-to-year noise; the record has {have}.',
   'compare.title': 'Compare with another territory',
   'compare.add': 'Add a territory to compare',
   'compare.remove': 'Remove',
@@ -543,6 +547,10 @@ const RU: typeof EN = {
     'Похоже на ступеньку, а не на плавный тренд: уровень сдвинулся на {v} около {year} года. Проверьте, было ли реальное событие или смена системы наблюдений.',
   'cp.none': 'Резкой ступеньки нет: изменение постепенное.',
   'detect.need': 'При таком шуме тренду этой величины нужно около {n} лет данных, чтобы проявиться; в ряду {have}.',
+  'detect.longer':
+    'Пока не доказано. При таких колебаниях от года к году изменению такой величины нужно около {n} лет данных, чтобы проявиться, а в ряду {have}. Иногда тренду нужен просто более длинный ряд.',
+  'detect.century':
+    'Пока не доказано. Такому слабому изменению нужно больше века данных, чтобы проявиться на фоне колебаний от года к году; в ряду {have}.',
   'compare.title': 'Сравнить с другой территорией',
   'compare.add': 'Добавить территорию для сравнения',
   'compare.remove': 'Убрать',

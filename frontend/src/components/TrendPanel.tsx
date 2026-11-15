@@ -27,6 +27,22 @@ export function PlainVerdict({ s, name, tone }: { s: Series; name: string; tone:
   )
 }
 
+// beyond this the estimate says only that the record is far too short
+const MAX_YEARS_SHOWN = 100
+
+/** A trend that is not proven yet may only need a longer record: how many years this noise needs (Weatherhead 1998). */
+export function LongerRecord({ s }: { s: Series }) {
+  const { t, num } = useI18n()
+  const need = s.years_to_detect
+  const unproven = s.verdict === 'no_trend' || s.verdict === 'likely_up' || s.verdict === 'likely_down'
+  if (!unproven || !need || !Number.isFinite(need) || need <= s.n_years) return null
+  return (
+    <p className="small detect">
+      {need > MAX_YEARS_SHOWN ? t('detect.century', { have: s.n_years }) : t('detect.longer', { n: num(need, 0), have: s.n_years })}
+    </p>
+  )
+}
+
 export function Verdict({ s, name, tone }: { s: Series; name: string; tone: 'main' | 'compare' }) {
   const { t, num, unit, l } = useI18n()
   const dir = s.verdict.endsWith('_up') ? 'up' : s.verdict.endsWith('_down') ? 'down' : 'flat'
@@ -65,6 +81,7 @@ export function Verdict({ s, name, tone }: { s: Series; name: string; tone: 'mai
         {' · '}
         {t('rate.mean', { v: `${num(s.mean, s.variable.decimals)} ${unit(s.variable.units)}` })}
       </div>
+      {tone === 'main' && <LongerRecord s={s} />}
       {tone === 'main' && twin && (
         <div className="small twin">
           <Mark ok={twin.agrees} fail="open" />{' '}
