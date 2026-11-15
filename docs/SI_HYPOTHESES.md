@@ -1,15 +1,15 @@
 # Hypotheses from the literature, tested on the data
 
-The challenge suggests using AI to find which variables may show trends in particular areas, from research papers
-or from the character of a region (a desert, a rainforest, a city). We did this with Claude Science, an AI research
+The challenge suggests using SI (super intelligence, the term the challenge uses for artificial intelligence) to find which variables may show trends in particular areas, from research papers
+or from the character of a region (a desert, a rainforest, a city). We did this with Claude Science, an SI research
 assistant, working through the public API of Trend Detective on 15 November 2026.
 
 The division of work was strict:
 
-* **The AI** chose territory types, found peer-reviewed papers, wrote each hypothesis down before any test (variables,
+* **The SI** chose territory types, found peer-reviewed papers, wrote each hypothesis down before any test (variables,
   territory, expected sign, expected lag, paper DOI) and checked every DOI in Crossref.
 * **Trend Detective** computed every number: trends, links, p-values and verdicts come from our API, the same tests
-  the site uses (`backend/app/trend.py`). The AI did not compute or adjust any statistic.
+  the site uses (`backend/app/trend.py`). The SI did not compute or adjust any statistic.
 
 The team then checked the key numbers again through the API; they match.
 
@@ -78,8 +78,8 @@ country or ocean region: `ozone_warms_stratosphere`, `sea_ice_insulates_air`, `w
   climate indices such as El Nino.
 * Satellite halves of 10 to 13 years have little statistical power.
 * Links are correlations at lag 0: the direction of each rule comes from its paper, not from the data.
-* The report of the AI says the link test has no terrain filter. It has one (`terrain` in the request); it was simply
-  not described in the instructions the AI received, so H11 and H15 used all land cover of their regions.
+* The report of the SI says the link test has no terrain filter. It has one (`terrain` in the request); it was simply
+  not described in the instructions the SI received, so H11 and H15 used all land cover of their regions.
 
 ## Papers
 

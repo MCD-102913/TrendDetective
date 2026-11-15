@@ -51,7 +51,7 @@ from .regions import Regions, geometry_from_request
 DATA_DIR = Path(os.environ.get("TREND_DATA_DIR", "data"))
 MAX_GEOMETRY_POINTS = 20000
 COUNTRY_HEADER = os.environ.get("TREND_COUNTRY_HEADER", "").strip().lower()
-# the header where a proxy in front of the site puts the visitor's address (for the limits of the AI agent)
+# the header where a proxy in front of the site puts the visitor's address (for the limits of the SI agent)
 CLIENT_IP_HEADER = os.environ.get("TREND_CLIENT_IP_HEADER", "x-forwarded-for").strip().lower()
 
 app = FastAPI(title="Trend Detective API", version="0.2")

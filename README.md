@@ -59,10 +59,10 @@ Monthly global records, regridded to a common grid of 0.5 to 1 degree.
 * **LP DAAC, GES DISC, OB.DAAC**: download of the MODIS, GLDAS, AIRS, OMI, ocean colour and land cover files over HTTPS.
 * **NASA Harmony** with the Giovanni averaging service: area averaged series computed by NASA, to verify ours.
 * **NASA GIBS** (the imagery behind NASA Worldview): recent satellite pictures shown on the map for context.
-* **Claude Science** (an AI research assistant): turned peer-reviewed papers into 19 hypotheses about deserts,
+* **Claude Science** (an SI research assistant): turned peer-reviewed papers into 19 hypotheses about deserts,
   rainforests, cities, croplands, deltas, polar seas and the upper atmosphere, tested through our API on two
-  independent periods; 12 were supported. See `docs/AI_HYPOTHESES.md`.
-* **Google Gemini API** (model Gemini 4 Hydrogen): the AI detective that decides which of our tests to run for a
+  independent periods; 12 were supported. See `docs/SI_HYPOTHESES.md`.
+* **Google Gemini API** (model Gemini 4 Hydrogen): the SI detective that decides which of our tests to run for a
   question; every number it shows comes from our own statistics. Optional: set `GEMINI_API_KEY` on the server.
 
 ## Stack

@@ -62,7 +62,7 @@ rules:
     territories: [ocean_n_pacific_gyre, ocean_s_pacific_gyre, ocean_n_atlantic_gyre, ocean_s_atlantic_gyre, ocean_indian_gyre, ocean_eq_pacific, ocean_arabian_sea, ocean_bay_of_bengal, ocean_n_atlantic_subpolar, ocean_southern, ocean_mediterranean, ocean_humboldt, ocean_benguela]
 
   # Hypotheses proposed by Claude Science from the cited papers and tested through the API on two independent
-  # periods (1981 to 2003 and 2004 to 2025; satellite records split in halves), see docs/AI_HYPOTHESES.md.
+  # periods (1981 to 2003 and 2004 to 2025; satellite records split in halves), see docs/SI_HYPOTHESES.md.
   - id: ozone_warms_stratosphere
     name:
       en: Less ozone, colder lower stratosphere

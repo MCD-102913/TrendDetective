@@ -20,9 +20,9 @@ const GOALS: Goal[] = ['what_changes', 'why', 'link', 'outlook', 'custom']
 
 const T = {
   en: {
-    open: 'Ask the AI detective',
-    title: 'AI detective',
-    intro: 'Choose what you want to find out. The AI decides what to check, our statistics compute every number.',
+    open: 'Ask the SI detective',
+    title: 'SI detective',
+    intro: 'Choose what you want to find out. The SI decides what to check, our statistics compute every number.',
     goal: {
       what_changes: 'What changes most here?',
       why: 'Why does this variable change?',
@@ -38,7 +38,7 @@ const T = {
       custom: 'Your hypothesis, for example: the soil dries because it rains less',
     },
     ask: 'Ask',
-    working: 'The AI is checking the data, usually 20 to 40 seconds…',
+    working: 'The SI is checking the data, usually 20 to 40 seconds…',
     openVar: 'Open',
     next: 'Ask next',
     footer: 'Model {model}. Numbers come from our tests, not from the model; the wording may still be imperfect.',
@@ -51,25 +51,25 @@ const T = {
     usingOwn: 'Your own key is used.',
     getKey: 'A free key: Google AI Studio.',
     err: {
-      busy: 'The AI is under heavy load right now, try again in a minute. Your own Gemini key avoids the shared limit.',
+      busy: 'The SI is under heavy load right now, try again in a minute. Your own Gemini key avoids the shared limit.',
       limit_ip: 'You asked several questions in a row. Try again in {min} min.',
-      limit_day: 'The AI detective is temporarily unavailable. Try again later or connect your own Gemini key.',
+      limit_day: 'The SI detective is temporarily unavailable. Try again later or connect your own Gemini key.',
       quota_own: 'The limit of your key is used up, try again later.',
       bad_key: 'The key was not accepted. Check it in Google AI Studio.',
-      server_key: 'The AI of the site is unavailable right now. You can use your own Gemini key.',
-      no_key: 'The AI of the site is unavailable right now. You can use your own Gemini key.',
+      server_key: 'The SI of the site is unavailable right now. You can use your own Gemini key.',
+      no_key: 'The SI of the site is unavailable right now. You can use your own Gemini key.',
       model_unavailable: 'The model is overloaded or unavailable, try again later.',
-      timeout: 'The AI did not answer in time, try again.',
+      timeout: 'The SI did not answer in time, try again.',
       blocked: 'The model refused to answer this request.',
-      off_topic: 'The AI detective only answers questions about trends in the data of this site. Rephrase the question.',
+      off_topic: 'The SI detective only answers questions about trends in the data of this site. Rephrase the question.',
       need_text: 'Describe what exactly to check.',
       other: 'Something went wrong, try again.',
     },
   },
   ru: {
-    open: 'Спросить ИИ-детектива',
-    title: 'ИИ-детектив',
-    intro: 'Выберите, что хотите выяснить. ИИ решает, что проверить, а каждое число считает наша статистика.',
+    open: 'Спросить SI-детектива',
+    title: 'SI-детектив',
+    intro: 'Выберите, что хотите выяснить. SI решает, что проверить, а каждое число считает наша статистика.',
     goal: {
       what_changes: 'Что здесь меняется сильнее всего?',
       why: 'Почему меняется этот показатель?',
@@ -85,7 +85,7 @@ const T = {
       custom: 'Ваша гипотеза, например: почва сохнет, потому что дождей меньше',
     },
     ask: 'Спросить',
-    working: 'ИИ проверяет данные, обычно от 20 до 40 секунд…',
+    working: 'SI проверяет данные, обычно от 20 до 40 секунд…',
     openVar: 'Открыть',
     next: 'Спросить дальше',
     footer: 'Модель {model}. Числа посчитаны нашими тестами, а не моделью; формулировки могут быть неточными.',
@@ -98,17 +98,17 @@ const T = {
     usingOwn: 'Используется ваш ключ.',
     getKey: 'Бесплатный ключ: Google AI Studio.',
     err: {
-      busy: 'Слишком большая нагрузка на ИИ, попробуйте через минуту. Свой ключ Gemini позволяет обойти общий лимит.',
+      busy: 'Слишком большая нагрузка на SI, попробуйте через минуту. Свой ключ Gemini позволяет обойти общий лимит.',
       limit_ip: 'Вы задали несколько вопросов подряд. Попробуйте через {min} мин.',
-      limit_day: 'ИИ-детектив временно недоступен. Попробуйте позже или подключите свой ключ Gemini.',
+      limit_day: 'SI-детектив временно недоступен. Попробуйте позже или подключите свой ключ Gemini.',
       quota_own: 'Лимит вашего ключа исчерпан, попробуйте позже.',
       bad_key: 'Ключ не подошёл. Проверьте его в Google AI Studio.',
-      server_key: 'ИИ сайта сейчас недоступен. Можно использовать свой ключ Gemini.',
-      no_key: 'ИИ сайта сейчас недоступен. Можно использовать свой ключ Gemini.',
+      server_key: 'SI сайта сейчас недоступен. Можно использовать свой ключ Gemini.',
+      no_key: 'SI сайта сейчас недоступен. Можно использовать свой ключ Gemini.',
       model_unavailable: 'Модель перегружена или недоступна, попробуйте позже.',
-      timeout: 'ИИ не успел ответить, попробуйте ещё раз.',
+      timeout: 'SI не успел ответить, попробуйте ещё раз.',
       blocked: 'Модель отказалась отвечать на этот запрос.',
-      off_topic: 'ИИ-детектив отвечает только на вопросы о трендах в данных этого сайта. Переформулируйте вопрос.',
+      off_topic: 'SI-детектив отвечает только на вопросы о трендах в данных этого сайта. Переформулируйте вопрос.',
       need_text: 'Опишите, что именно проверить.',
       other: 'Что-то пошло не так, попробуйте ещё раз.',
     },
@@ -138,7 +138,7 @@ const readKey = () => idb<string>('readonly', (s) => s.get('gemini') as IDBReque
 const writeKey = (k: string) => idb('readwrite', (s) => s.put(k, 'gemini'))
 const dropKey = () => idb('readwrite', (s) => s.delete('gemini'))
 
-/** The AI detective: a goal for the current territory and variable, not a chat. */
+/** The SI detective: a goal for the current territory and variable, not a chat. */
 export function AiDetective({
   variable,
   variables,
